@@ -1,0 +1,1842 @@
+{
+  "Sales": {
+    "short_name": "Sales",
+    "description": "Trailing 12 Months Sales",
+    "group": "annual_pl most_used"
+  },
+  "OPM": {
+    "short_name": "OPM",
+    "description": "Operating profit margin based on last 4 quarters.",
+    "group": "annual_pl most_used"
+  },
+  "Profit after tax": {
+    "short_name": "PAT 12M",
+    "description": "Profit after tax excluding extra-ordinary items during last 12 months.",
+    "group": "annual_pl most_used"
+  },
+  "Market Capitalization": {
+    "short_name": "Mar Cap",
+    "description": "Market Capitalization of the company at current market price.",
+    "group": "ratios most_used"
+  },
+  "Sales latest quarter": {
+    "short_name": "Sales Qtr",
+    "description": "Sales as per latest quarterly results.",
+    "group": "quarter_pl most_used"
+  },
+  "Profit after tax latest quarter": {
+    "short_name": "PAT Qtr",
+    "description": "Profit after Tax (excluding extraordinary items) as per latest quarterly results.",
+    "group": "quarter_pl most_used"
+  },
+  "YOY Quarterly sales growth": {
+    "short_name": "Qtr Sales Var",
+    "description": "Year on year growth in quarterly sales.",
+    "group": "quarter_pl most_used"
+  },
+  "YOY Quarterly profit growth": {
+    "short_name": "Qtr Profit Var",
+    "description": "Year on year growth in quarterly profit after tax.",
+    "group": "quarter_pl most_used"
+  },
+  "Price to Earning": {
+    "short_name": "P/E",
+    "description": "Current Market Price to trailing 12 month's earnings (TTM PE). Earnings exclude extraordinary items.",
+    "group": "ratios most_used"
+  },
+  "Dividend yield": {
+    "short_name": "Div Yld",
+    "description": "Dividend yield excluding special dividends",
+    "group": "ratios most_used"
+  },
+  "Price to book value": {
+    "short_name": "CMP / BV",
+    "description": "Price to book value of the stock.",
+    "group": "ratios most_used"
+  },
+  "Return on capital employed": {
+    "short_name": "ROCE",
+    "description": "\n        EBIT / Annual Average Capital Employed\n\n        Capital Employed = Share capital + Reserves + Borrowings\n        ",
+    "group": "annual_pl most_used"
+  },
+  "Return on assets": {
+    "short_name": "ROA 12M",
+    "description": "Net profit last year on average total assets in balance sheet.",
+    "group": "ratios most_used"
+  },
+  "Debt to equity": {
+    "short_name": "Debt / Eq",
+    "description": "Total debt of the company upon funds for equity share holders.",
+    "group": "ratios most_used"
+  },
+  "Return on equity": {
+    "short_name": "ROE",
+    "description": "ROE: Return on average equity measures a company's profitability by revealing how much profit a company generates with the money shareholders have invested.",
+    "group": "ratios most_used"
+  },
+  "EPS": {
+    "short_name": "EPS 12M",
+    "description": "Earning per share during last 4 quarters.",
+    "group": "annual_pl most_used"
+  },
+  "Debt": {
+    "short_name": "Debt",
+    "description": "Total borrowings as per latest annual numbers",
+    "group": "balance_sheet most_used"
+  },
+  "Promoter holding": {
+    "short_name": "Prom. Hold.",
+    "description": "Promoter holding as per latest shareholding filing",
+    "group": "ratios most_used"
+  },
+  "Change in promoter holding": {
+    "short_name": "Change in Prom Hold",
+    "description": "Change in promoter holding versus previous quarter.",
+    "group": "annual_pl most_used"
+  },
+  "Earnings yield": {
+    "short_name": "Earnings Yield",
+    "description": "Earnings yield formula as given by JG i.e. Trailing EBIT / Enterprise Value",
+    "group": "ratios most_used"
+  },
+  "Pledged percentage": {
+    "short_name": "Pledged",
+    "description": "Percentage of promoter holding pledged.",
+    "group": "ratios most_used"
+  },
+  "Industry PE": {
+    "short_name": "Ind PE",
+    "description": "Industrial price to earning",
+    "group": "ratios most_used"
+  },
+  "Sales growth": {
+    "short_name": "Sales growth",
+    "description": "TTM Sales growth: ie sales of last 4 quarters vs preceding 4 quarters.",
+    "group": "quarter_pl most_used"
+  },
+  "Profit growth": {
+    "short_name": "Profit growth",
+    "description": "TTM Profit growth: ie profit of last 4 quarters vs preceding 4 quarters",
+    "group": "quarter_pl most_used"
+  },
+  "Current price": {
+    "short_name": "CMP",
+    "description": "Last closing price of the stock.",
+    "group": "price most_used"
+  },
+  "Price to Sales": {
+    "short_name": "CMP / Sales",
+    "description": "Price to Sales",
+    "group": "user_ratio most_used"
+  },
+  "Price to Free Cash Flow": {
+    "short_name": "CMP / FCF",
+    "description": "Price to Average free cash flow 3years per share",
+    "group": "user_ratio most_used"
+  },
+  "EVEBITDA": {
+    "short_name": "EV / EBITDA",
+    "description": "Enterprise Value / EBITDA Ratio",
+    "group": "user_ratio most_used"
+  },
+  "Enterprise Value": {
+    "short_name": "EV",
+    "description": "Enterprise Value is Market cap + debt - cash",
+    "group": "ratios most_used"
+  },
+  "Current ratio": {
+    "short_name": "Current ratio",
+    "description": "A liquidity ratio that measures a company''s ability to pay short-term obligations",
+    "group": "user_ratio most_used"
+  },
+  "Interest Coverage Ratio": {
+    "short_name": "Int Coverage",
+    "description": "Earnings before Interest and Taxes upon Interest Expense",
+    "group": "user_ratio most_used"
+  },
+  "PEG Ratio": {
+    "short_name": "PEG",
+    "description": "Price to Earning / Profit growth 3Years",
+    "group": "user_ratio most_used"
+  },
+  "Return over 3months": {
+    "short_name": "3mth return",
+    "description": "Price change over last 3 months in percent",
+    "group": "price most_used"
+  },
+  "Return over 6months": {
+    "short_name": "6mth return",
+    "description": "Price change over last 6 months in percent",
+    "group": "price most_used"
+  },
+  "Is SME": {
+    "short_name": "Is SME",
+    "description": "1 if it is a SME company",
+    "group": "price"
+  },
+  "Is not SME": {
+    "short_name": "Is not SME",
+    "description": "1 if it is not a SME company",
+    "group": "price"
+  },
+  "Number of equity shares": {
+    "short_name": "No. Eq. Shares",
+    "description": "Number of equity shares as per latest filing",
+    "group": "ratios"
+  },
+  "Equity capital": {
+    "short_name": "Eq Cap",
+    "description": "Equity share capital from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Preference capital": {
+    "short_name": "Pref Cap",
+    "description": "Preference share capital from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Reserves": {
+    "short_name": "Reserves",
+    "description": "Reserves from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Secured loan": {
+    "short_name": "Secured Loan",
+    "description": "Secured loans from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Unsecured loan": {
+    "short_name": "Unsecured Loan",
+    "description": "Unsecured loans from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Balance sheet total": {
+    "short_name": "BS Total",
+    "description": "Balance Sheet total from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Gross block": {
+    "short_name": "Gross Block",
+    "description": "Gross block from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Revaluation reserve": {
+    "short_name": "Reval Resv",
+    "description": "Revaluation reserve from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Accumulated depreciation": {
+    "short_name": "Accum Dep",
+    "description": "Accumulated Depreciation from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Net block": {
+    "short_name": "Net Block",
+    "description": "Net block excluding CWIP from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Capital work in progress": {
+    "short_name": "CWIP",
+    "description": "Capital work-in-progress from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Investments": {
+    "short_name": "Investments",
+    "description": "Investments from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Current assets": {
+    "short_name": "Cur Assets",
+    "description": "Current assets from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Current liabilities": {
+    "short_name": "Cur Liab",
+    "description": "Current liabilities as reported in the latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Book value of unquoted investments": {
+    "short_name": "BV Unq Invest",
+    "description": "Book value of unquoted investments from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Market value of quoted investments": {
+    "short_name": "MV Quoted Inv",
+    "description": "Market value of quoted investments from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Contingent liabilities": {
+    "short_name": "Cont Liab",
+    "description": "Contingent liabilities from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Cash from operations last year": {
+    "short_name": "CF Operations",
+    "description": "Cash flow from operating activities as per last annual result",
+    "group": "cash_flow"
+  },
+  "Free cash flow last year": {
+    "short_name": "Free Cash Flow",
+    "description": "Cash Flow from operating activities - Fixed assets purchased + Fixed assets sold",
+    "group": "cash_flow"
+  },
+  "Cash from investing last year": {
+    "short_name": "CF Investing",
+    "description": "Cash flow from investing activities as per latest annual result",
+    "group": "cash_flow"
+  },
+  "Cash from financing last year": {
+    "short_name": "CF Financing",
+    "description": "Cash flow from financing activities as per latest annual result",
+    "group": "cash_flow"
+  },
+  "Net cash flow last year": {
+    "short_name": "Net CF",
+    "description": "Net cash flow as per latest annual result",
+    "group": "cash_flow"
+  },
+  "Cash beginning of last year": {
+    "short_name": "Cash Beginning",
+    "description": "Cash at beginning of year as per latest annual result",
+    "group": "cash_flow"
+  },
+  "Cash end of last year": {
+    "short_name": "Cash End",
+    "description": "Cash equivalents at end of last financial year",
+    "group": "cash_flow"
+  },
+  "Sales last year": {
+    "short_name": "Sales Ann",
+    "description": "Sales last year.",
+    "group": "annual_pl"
+  },
+  "Operating profit last year": {
+    "short_name": "OP Ann",
+    "description": "Operating Profit last year.",
+    "group": "annual_pl"
+  },
+  "Other income last year": {
+    "short_name": "Other Inc Ann",
+    "description": "Other Income last year.",
+    "group": "annual_pl"
+  },
+  "EBIDT last year": {
+    "short_name": "EBIDT Ann",
+    "description": "Earnings before Interest, Depreciation & Tax last year.",
+    "group": "annual_pl"
+  },
+  "Depreciation last year": {
+    "short_name": "Dep Ann",
+    "description": "Depreciation last year.",
+    "group": "annual_pl"
+  },
+  "EBIT last year": {
+    "short_name": "EBIT Ann",
+    "description": "Earnings before Interest & Tax last year.",
+    "group": "annual_pl"
+  },
+  "Interest last year": {
+    "short_name": "Interest Ann",
+    "description": "Interest last year.",
+    "group": "annual_pl"
+  },
+  "Profit before tax last year": {
+    "short_name": "PBT Ann",
+    "description": "Profit before Tax last year.",
+    "group": "annual_pl"
+  },
+  "Tax last year": {
+    "short_name": "Tax Ann",
+    "description": "Tax expense last year.",
+    "group": "annual_pl"
+  },
+  "Profit after tax last year": {
+    "short_name": "PAT Ann",
+    "description": "Profit after Tax last year (excluding extraordinary items).",
+    "group": "annual_pl"
+  },
+  "Extraordinary items last year": {
+    "short_name": "Extra Ord Item Ann",
+    "description": "Extraordinary items last year.",
+    "group": "annual_pl"
+  },
+  "Net Profit last year": {
+    "short_name": "NP Ann",
+    "description": "Net Profit last year.",
+    "group": "annual_pl"
+  },
+  "Dividend last year": {
+    "short_name": "Dividend Ann",
+    "description": "Dividend paid last year.",
+    "group": "annual_pl"
+  },
+  "Material cost last year": {
+    "short_name": "Raw Material",
+    "description": "Raw Material cost as a percentage of revenue last year",
+    "group": "annual_pl"
+  },
+  "Employee cost last year": {
+    "short_name": "Employee cost",
+    "description": "Total employee cost last incurred last year",
+    "group": "annual_pl"
+  },
+  "OPM last year": {
+    "short_name": "OPM Ann",
+    "description": "Operating profit margin last year.",
+    "group": "annual_pl"
+  },
+  "NPM last year": {
+    "short_name": "NPM Ann",
+    "description": "Net profit margin last year.",
+    "group": "annual_pl"
+  },
+  "Operating profit latest quarter": {
+    "short_name": "OP Qtr",
+    "description": "Operating Profit as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Other income latest quarter": {
+    "short_name": "Other Inc Qtr",
+    "description": "Other Income as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "EBIDT latest quarter": {
+    "short_name": "EBIDT Qtr",
+    "description": "Earnings before Interest, Depreciation & Tax as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Depreciation latest quarter": {
+    "short_name": "Dep Qtr",
+    "description": "Depreciation as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "EBIT latest quarter": {
+    "short_name": "EBIT Qtr",
+    "description": "Earnings before Interest and Tax as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Interest latest quarter": {
+    "short_name": "Interest Qtr",
+    "description": "Interest as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Profit before tax latest quarter": {
+    "short_name": "PBT Qtr",
+    "description": "Profit before Tax as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Tax latest quarter": {
+    "short_name": "Tax Qtr",
+    "description": "Tax expense as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Extraordinary items latest quarter": {
+    "short_name": "Extra Ord Item Qtr",
+    "description": "Extraordinary items as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Net Profit latest quarter": {
+    "short_name": "NP Qtr",
+    "description": "Net Profit as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "GPM latest quarter": {
+    "short_name": "GPM Qtr",
+    "description": "Gross profit margin as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "OPM latest quarter": {
+    "short_name": "OPM Qtr",
+    "description": "Operating profit margin as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "NPM latest quarter": {
+    "short_name": "NPM Qtr",
+    "description": "Net profit margin as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Equity Capital latest quarter": {
+    "short_name": "Eq Cap Qtr",
+    "description": "Equity Capital as per latest quarterly results.",
+    "group": "quarter_pl"
+  },
+  "EPS latest quarter": {
+    "short_name": "EPS Qtr",
+    "description": "Earning per share as per latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Price to Quarterly Earning": {
+    "short_name": "Qtr P/E",
+    "description": "Price upon (latest quarterly earning x 4) \n i.e. PE based only on latest quarter earning",
+    "group": "ratios"
+  },
+  "Book value": {
+    "short_name": "B.V.",
+    "description": "Book value per share: (Equity Capital + Reserves) / Number of shares",
+    "group": "ratios"
+  },
+  "Inventory turnover ratio": {
+    "short_name": "Inven TO",
+    "description": "Inventory turnover ratio for last year.",
+    "group": "ratios"
+  },
+  "Quick ratio": {
+    "short_name": "Quick Rat",
+    "description": "Quick ratio last year.",
+    "group": "ratios"
+  },
+  "Exports percentage": {
+    "short_name": "Export",
+    "description": "Exports percentage of total sales last year.",
+    "group": "ratios"
+  },
+  "Total Assets": {
+    "short_name": "Assets",
+    "description": "Total of Assets as per balance sheet",
+    "group": "balance_sheet"
+  },
+  "Piotroski score": {
+    "short_name": "Piotski Scr",
+    "description": "Companies with Piotroski score of 9 which reflects nine criteria used to determine the strength of a firm's financial position. It is based on 3 most important criteria: Profitability, Leverage and operating efficiency.",
+    "group": "ratios"
+  },
+  "G Factor": {
+    "short_name": "G Factor",
+    "description": "Score out of 10. It is based on companies growth and quality of earnings. A score of 7 and above is very healthy.",
+    "group": "ratios"
+  },
+  "Operating profit": {
+    "short_name": "OP 12M",
+    "description": "Sum of operating profit in last 4 quarters",
+    "group": "annual_pl"
+  },
+  "Interest": {
+    "short_name": "Interest 12M",
+    "description": "Sum of interest in last 4 quarters",
+    "group": "annual_pl"
+  },
+  "Depreciation": {
+    "short_name": "Dep 12M",
+    "description": "Sum of Depreciation in last 4 quarters",
+    "group": "annual_pl"
+  },
+  "EPS last year": {
+    "short_name": "EPS Ann",
+    "description": "Earnings per share last financial year.",
+    "group": "annual_pl"
+  },
+  "EBIT": {
+    "short_name": "EBIT 12M",
+    "description": "Total earnings before interest and taxes during last 12 months.",
+    "group": "annual_pl"
+  },
+  "Net profit": {
+    "short_name": "NP 12M",
+    "description": "Net profits of the the company during last 12 months.",
+    "group": "annual_pl"
+  },
+  "Asset Turnover Ratio": {
+    "short_name": "Asset Turnover",
+    "description": "Annual Sales / Average Total Assets as per balance sheet",
+    "group": "ratios"
+  },
+  "Financial leverage": {
+    "short_name": "Leverage",
+    "description": "Average Total Assets as per balance sheet / Net worth",
+    "group": "ratios"
+  },
+  "Current Tax": {
+    "short_name": "Current Tax 12M",
+    "description": "Tax (without deferred tax) during last 4 quarters",
+    "group": "annual_pl"
+  },
+  "Tax": {
+    "short_name": "Tax 12M",
+    "description": "Tax expenditure during last 4 quarters",
+    "group": "annual_pl"
+  },
+  "Operating profit 2quarters back": {
+    "short_name": "OP 2Qtr Bk",
+    "description": "Operating profit 2 quarters back (preceding-preceding quarter).",
+    "group": "quarter_pl"
+  },
+  "Operating profit 3quarters back": {
+    "short_name": "OP 3Qtr Bk",
+    "description": "Operating profit 3 quarters back (corresponding previous quarter of upcoming quarter).",
+    "group": "quarter_pl"
+  },
+  "Sales 2quarters back": {
+    "short_name": "Sales 2Qtr Bk",
+    "description": "Sales during 2 quarters back (preceding-preceding quarter).",
+    "group": "quarter_pl"
+  },
+  "Sales 3quarters back": {
+    "short_name": "Sales 3Qtr Bk",
+    "description": "Sales 3 quarters back (corresponding previous quarter of upcoming quarter).",
+    "group": "quarter_pl"
+  },
+  "Net profit 2quarters back": {
+    "short_name": "NP 2Qtr Bk",
+    "description": "Net profit 2 quarters back (preceding-preceding quarter).",
+    "group": "quarter_pl"
+  },
+  "Net profit 3quarters back": {
+    "short_name": "NP 3Qtr Bk",
+    "description": "Net profit 3 quarters back (corresponding previous quarter of upcoming quarter).",
+    "group": "quarter_pl"
+  },
+  "Working capital": {
+    "short_name": "Working Cap",
+    "description": "Working capital (Current assets - current liabilities - short term borrowings) from latest balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Number of Shareholders": {
+    "short_name": "No. of Share Holders",
+    "description": "Number of shareholders as per latest filing",
+    "group": "ratios"
+  },
+  "Unpledged promoter holding": {
+    "short_name": "Unpledged Prom Hold",
+    "description": "Percentage of unpledged promoter holding of total equity capital.",
+    "group": "ratios"
+  },
+  "Return on invested capital": {
+    "short_name": "ROIC",
+    "description": "NOPAT upon invested capital (net block + working capital) ie. return from core business",
+    "group": "ratios"
+  },
+  "Lease liabilities": {
+    "short_name": "Lease Liability",
+    "description": "Amount of lease liabilities (part of borrowings) as per latest balance sheet",
+    "group": "balance_sheet"
+  },
+  "Inventory": {
+    "short_name": "Inventory",
+    "description": "Value of inventory as per latest annual report",
+    "group": "balance_sheet"
+  },
+  "Trade receivables": {
+    "short_name": "Trade receivables",
+    "description": "Trade Receivables (sundry debtors) as per latest annual report.",
+    "group": "balance_sheet"
+  },
+  "Debtor days": {
+    "short_name": "Debtor days",
+    "description": "Average trade receivables by sales per day as per the latest annual report.",
+    "group": "ratios"
+  },
+  "Industry PBV": {
+    "short_name": "Ind PBV",
+    "description": "Industrial Price to Book Value",
+    "group": "ratios"
+  },
+  "Operating profit growth": {
+    "short_name": "Opert Prft Gwth",
+    "description": "TTM Operating profit growth: change over last 4 quarters vs preceding 4 quarters",
+    "group": "quarter_pl"
+  },
+  "Other income": {
+    "short_name": "Other Income",
+    "description": "Other income from last 4 quarterly results.",
+    "group": "annual_pl"
+  },
+  "Volume 1month average": {
+    "short_name": "Avg Vol 1Mth",
+    "description": "Average quantity traded over last 1 month across all exchanges.",
+    "group": "price"
+  },
+  "Volume 1week average": {
+    "short_name": "Avg Vol 1Wk",
+    "description": "Average quantity traded over last 7 days across all exchanges.",
+    "group": "price"
+  },
+  "Volume": {
+    "short_name": "Vol 1d",
+    "description": "Quantity traded on last trade date across all exchanges.",
+    "group": "price"
+  },
+  "High price": {
+    "short_name": "52w High",
+    "description": "52 Weeks high price of the company's stock.",
+    "group": "price"
+  },
+  "Low price": {
+    "short_name": "52w Low",
+    "description": "52 Weeks low price of the company's stock.",
+    "group": "price"
+  },
+  "High price all time": {
+    "short_name": "All time high",
+    "description": "All time high price since 2005",
+    "group": "price"
+  },
+  "Low price all time": {
+    "short_name": "All time low",
+    "description": "All time low price since 2005",
+    "group": "price"
+  },
+  "Face value": {
+    "short_name": "Face value",
+    "description": "Face value or nominal value of the company's equity shares.",
+    "group": "balance_sheet"
+  },
+  "Credit rating": {
+    "short_name": "Credit Rate",
+    "description": "Credit rating of the company's loans.",
+    "group": "ratios"
+  },
+  "Working Capital to Sales ratio": {
+    "short_name": "WC to Sales",
+    "description": "Calculates working capital as a percentage of sales",
+    "group": "user_ratio"
+  },
+  "QoQ Profits": {
+    "short_name": "QoQ Profits",
+    "description": "QoQ Profit Growth as per latest quarterly result",
+    "group": "user_ratio"
+  },
+  "QoQ Sales": {
+    "short_name": "QoQ Sales",
+    "description": "QoQ Sales Growth as per latest quarterly result",
+    "group": "user_ratio"
+  },
+  "Net worth": {
+    "short_name": "Net worth",
+    "description": "Company's net worth (or total book value)",
+    "group": "user_ratio"
+  },
+  "Market Cap to Sales": {
+    "short_name": "M.Cap / Sales",
+    "description": "Market Cap to Sales ratio",
+    "group": "user_ratio"
+  },
+  "Interest Coverage": {
+    "short_name": "Interest coverage",
+    "description": "Interest Coverage Ratio",
+    "group": "user_ratio"
+  },
+  "Enterprise Value to EBIT": {
+    "short_name": "EV / EBIT",
+    "description": "Ratio of Enterprise value to EBIT",
+    "group": "user_ratio"
+  },
+  "Debt Capacity": {
+    "short_name": "Debt Capacity",
+    "description": "Debt Capacity Greater than 1 indicates debt capacity bargain",
+    "group": "user_ratio"
+  },
+  "Debt To Profit": {
+    "short_name": "Debt To Profit",
+    "description": "Rather than Debt to Equity, as the Debt is serviced through the actual net profit, this ratio checks how much debt the company is carrying and its ability to service the same",
+    "group": "user_ratio"
+  },
+  "Total Capital Employed": {
+    "short_name": "Capital Employed",
+    "description": "Net block + Working capital + Capital work in progress",
+    "group": "user_ratio"
+  },
+  "CROIC": {
+    "short_name": "CROIC",
+    "description": "Cash return on invested capital: Average (3yr) Free cash flow / Invested capital",
+    "group": "user_ratio"
+  },
+  "debtplus": {
+    "short_name": "debt+",
+    "description": "modified debt equity to include contingent liabilities",
+    "group": "user_ratio"
+  },
+  "Leverage": {
+    "short_name": "Leverage",
+    "description": "Financial Leverage",
+    "group": "user_ratio"
+  },
+  "Dividend Payout": {
+    "short_name": "Payout ratio",
+    "description": "Dividend Payout as a percentage of net profit",
+    "group": "user_ratio"
+  },
+  "Intrinsic Value": {
+    "short_name": "IV",
+    "description": "Intrinsic value based on modified Graham Number",
+    "group": "user_ratio"
+  },
+  "cash debt contingent liabilities by mcap": {
+    "short_name": "CDL",
+    "description": "cash minus debt and contingent liabilities as percentage of market capitalization",
+    "group": "user_ratio"
+  },
+  "Cash by market cap": {
+    "short_name": "Cash / MCap",
+    "description": "Average cash in last and preceding year as percentage of mcap",
+    "group": "user_ratio"
+  },
+  "52w Index": {
+    "short_name": "52w",
+    "description": "Where is the stock currently, in its 52w price band: (Current price - Low price) * 100 / (High price - Low price)",
+    "group": "user_ratio"
+  },
+  "Down from 52w high": {
+    "short_name": "Down",
+    "description": "Price difference from 52 weeks high",
+    "group": "user_ratio"
+  },
+  "Up from 52w low": {
+    "short_name": "Up",
+    "description": "Price difference from 52 Weeks low",
+    "group": "user_ratio"
+  },
+  "From 52w high": {
+    "short_name": "From 52w high",
+    "description": "How close is it to the 52w high",
+    "group": "user_ratio"
+  },
+  "Mkt Cap To Debt Cap": {
+    "short_name": "Mkt Cap To Debt Cap",
+    "description": "Debt Capacity: If Market Cap/ Debt Cpacity < 1 then it is good; Ability to pay the debt",
+    "group": "user_ratio"
+  },
+  "Dividend Payout Ratio": {
+    "short_name": "Dividend Payout",
+    "description": "Dividend Payout as a percentage of net profit",
+    "group": "user_ratio"
+  },
+  "Graham": {
+    "short_name": "Graham Price",
+    "description": "Graham number is the formula Ben Graham used to calculate the maximum price one should pay for a stock: square root of (22.5 * EPS * BV)",
+    "group": "user_ratio"
+  },
+  "Price to Cash Flow": {
+    "short_name": "CMP / OCF",
+    "description": "Price to Operating Cash Flow Ratio (per share)",
+    "group": "user_ratio"
+  },
+  "ROCE3yr avg": {
+    "short_name": "ROCE3yr avg",
+    "description": "Average return on capital employed 3Years",
+    "group": "user_ratio"
+  },
+  "Working Capital Days": {
+    "short_name": "WC Days",
+    "description": "(Working Capital - Cash) / Sales * 365",
+    "group": "ratios"
+  },
+  "Cash Equivalents": {
+    "short_name": "Cash",
+    "description": "Cash equivalents as per the latest balance sheet",
+    "group": "balance_sheet"
+  },
+  "Earning Power": {
+    "short_name": "BEP",
+    "description": "Basic Earning Power: EBIT / Total Assets",
+    "group": "ratios"
+  },
+  "PB X PE": {
+    "short_name": "PB X PE",
+    "description": "Graham's formula to calculate the maximum price one should pay for a stock. As per this rule, the product of a stock's price to earnings (P/E) and price to book value (P/BV) should not be more than 22.5 i.e., P/E of 15 multiplied by P/BV of 1.5.",
+    "group": "user_ratio"
+  },
+  "Graham Number": {
+    "short_name": "Graham's Number",
+    "description": "Graham number is the formula Ben Graham used to calculate the maximum price one should pay for a stock: square root of (22.5 * EPS * BV)",
+    "group": "ratios"
+  },
+  "NCAVPS": {
+    "short_name": "NCAVPS",
+    "description": "Net Current Assets value per share: Working Capital / Number of equity shares",
+    "group": "user_ratio"
+  },
+  "Market Capt to Cash Flow": {
+    "short_name": "Mar Cap to CF",
+    "description": "Market Capitalization / Cash from operating activities",
+    "group": "user_ratio"
+  },
+  "Altman Z Score": {
+    "short_name": "Altman Z Scr",
+    "description": "Altman Z Score",
+    "group": "user_ratio"
+  },
+  "Cash Conversion Cycle": {
+    "short_name": "Cash Cycle",
+    "description": "How quickly the company turns its inventory into sales, and its sales into cash, which is then used to pay its suppliers for goods and services",
+    "group": "ratios"
+  },
+  "Advance from Customers": {
+    "short_name": "Adv Cust",
+    "description": "Advance from customers in current liabilities",
+    "group": "balance_sheet"
+  },
+  "Trade Payables": {
+    "short_name": "Payables",
+    "description": "Amount of trade payables (sundry creditors) as per latest annual report.",
+    "group": "balance_sheet"
+  },
+  "Days Payable Outstanding": {
+    "short_name": "Days Payable",
+    "description": "Annual Trade Payables / Annual Material cost * 365",
+    "group": "ratios"
+  },
+  "Days Receivable Outstanding": {
+    "short_name": "Days Receivable",
+    "description": "Number of days after which the payment is usually realized by the debtors",
+    "group": "ratios"
+  },
+  "Days Inventory Outstanding": {
+    "short_name": "Inventory Days",
+    "description": "Annual Inventory / Annual Material Cost * 365",
+    "group": "ratios"
+  },
+  "Market cap to quarterly profit": {
+    "short_name": "M.Cap / Qtr Profit",
+    "description": "Number of times Market capitalization is of the Profit after tax from latest quarter.",
+    "group": "user_ratio"
+  },
+  "Return over 1day": {
+    "short_name": "1day return",
+    "description": "Price change vs previous day in percent",
+    "group": "price"
+  },
+  "Return over 1week": {
+    "short_name": "1wk return",
+    "description": "Price change over last 1 week in percent",
+    "group": "price"
+  },
+  "Return over 1month": {
+    "short_name": "1mth return",
+    "description": "Price change over last 1 month in percent",
+    "group": "price"
+  },
+  "Last result date": {
+    "short_name": "Qtr Date",
+    "description": "Date of the latest result available in YYYYMM format",
+    "group": "quarter_pl"
+  },
+  "Last annual result date": {
+    "short_name": "Ann Date",
+    "description": "Date of last annual result in YYYYMM format",
+    "group": "annual_pl"
+  },
+  "Expected quarterly sales growth": {
+    "short_name": "Exp Qtr Sales Var",
+    "description": "Expected Year-on-year sales growth for the upcoming quarter based on trends of last 8 quarters.",
+    "group": "quarter_pl"
+  },
+  "Expected quarterly sales": {
+    "short_name": "Exp Qtr Sales",
+    "description": "Expected sales for the upcoming quarter based on trend of last 8 quarters.",
+    "group": "quarter_pl"
+  },
+  "Expected quarterly operating profit": {
+    "short_name": "Exp Qtr OP",
+    "description": "Expected operating profit for upcoming quarter based on expected quarterly sales.",
+    "group": "quarter_pl"
+  },
+  "Expected quarterly net profit": {
+    "short_name": "Exp Qtr NP",
+    "description": "Expected net profit for the upcoming quarter based on expected sales.",
+    "group": "quarter_pl"
+  },
+  "Expected quarterly EPS": {
+    "short_name": "Exp Qtr EPS",
+    "description": "Expected EPS for upcoming quarter based on expected sales.",
+    "group": "quarter_pl"
+  },
+  "DMA 50": {
+    "short_name": "50 DMA",
+    "description": "50 days exponential moving average",
+    "group": "price"
+  },
+  "DMA 200": {
+    "short_name": "200 DMA",
+    "description": "200 days exponential moving average",
+    "group": "price"
+  },
+  "DMA 50 previous day": {
+    "short_name": "50 DMA prev.",
+    "description": "50 days exponential moving average day before yesterday",
+    "group": "price"
+  },
+  "DMA 200 previous day": {
+    "short_name": "200 DMA prev.",
+    "description": "200 days exponential moving average day before yesterday",
+    "group": "price"
+  },
+  "RSI": {
+    "short_name": "RSI",
+    "description": "Relative Strength Index of 14 days",
+    "group": "price"
+  },
+  "MACD": {
+    "short_name": "MACD",
+    "description": "Last value of MACD line",
+    "group": "price"
+  },
+  "MACD Previous Day": {
+    "short_name": "MACD Prev",
+    "description": "MACD value of previous day",
+    "group": "price"
+  },
+  "MACD Signal": {
+    "short_name": "MACD Signal",
+    "description": "Last value of MACD Signal Line",
+    "group": "price"
+  },
+  "MACD Signal Previous Day": {
+    "short_name": "MACD Signal Prev",
+    "description": "Value of MACD signal line for previous day",
+    "group": "price"
+  },
+  "Public holding": {
+    "short_name": "Public Hold",
+    "description": "Public shareholding excluding FII, DII and Government holding as per latest shareholding filing",
+    "group": "ratios"
+  },
+  "FII holding": {
+    "short_name": "FII Hold",
+    "description": "Total foreign institutional holdings as per latest shareholding filing",
+    "group": "ratios"
+  },
+  "Change in FII holding": {
+    "short_name": "Chg in FII Hold",
+    "description": "Change in FII holding versus previous quarter.",
+    "group": "ratios"
+  },
+  "DII holding": {
+    "short_name": "DII Hold",
+    "description": "Domestic institutional holding as per latest shareholding filing",
+    "group": "ratios"
+  },
+  "Change in DII holding": {
+    "short_name": "Chg in DII Hold",
+    "description": "Change in DII holding versus previous quarter.",
+    "group": "ratios"
+  },
+  "Number of equity shares preceding year": {
+    "short_name": "No. Eq. Shares PY",
+    "description": "Number of equity shares at the end of preceding financial year.",
+    "group": "balance_sheet"
+  },
+  "Free cash flow preceding year": {
+    "short_name": "FCF Prev Ann",
+    "description": "Cash Flow from operating activities - Fixed assets purchased + Fixed assets sold in preceding year",
+    "group": "cash_flow"
+  },
+  "Cash from operations preceding year": {
+    "short_name": "CF Operations PY",
+    "description": "Cash flow from operating activities from preceding year's cash-flow.",
+    "group": "cash_flow"
+  },
+  "Cash from investing preceding year": {
+    "short_name": "CF Investing PY",
+    "description": "Cash flow from investing activities from preceding year's cash-flow.",
+    "group": "cash_flow"
+  },
+  "Cash from financing preceding year": {
+    "short_name": "CF Financing PY",
+    "description": "Cash flow from financing activities from preceding year's cash-flow.",
+    "group": "cash_flow"
+  },
+  "Net cash flow preceding year": {
+    "short_name": "Net CF PY",
+    "description": "Net cash-flow from preceding year's cash-flow.",
+    "group": "cash_flow"
+  },
+  "Cash beginning of preceding year": {
+    "short_name": "Cash Beginning PY",
+    "description": "Cash at beginning of the year from preceding year's cash-flow.",
+    "group": "cash_flow"
+  },
+  "Cash end of preceding year": {
+    "short_name": "Cash End PY",
+    "description": "Cash at end of the year from preceding year's balance sheet.",
+    "group": "cash_flow"
+  },
+  "Sales preceding year": {
+    "short_name": "Sales Prev Ann",
+    "description": "Sales as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "Operating profit preceding year": {
+    "short_name": "OP Prev Ann",
+    "description": "Operating Profit as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "Other income preceding year": {
+    "short_name": "Other Inc Prev Ann",
+    "description": "Other Income as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "EBIDT preceding year": {
+    "short_name": "EBIDT Prev Ann",
+    "description": "Earnings before Interest, Depreciation & Tax as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "Depreciation preceding year": {
+    "short_name": "Dep Prev Ann",
+    "description": "Depreciation as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "EBIT preceding year": {
+    "short_name": "EBIT Prev Ann",
+    "description": "Earnings before Interest and Tax as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "Interest preceding year": {
+    "short_name": "Interest Prev Ann",
+    "description": "Interest as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "Profit before tax preceding year": {
+    "short_name": "PBT Prev Ann",
+    "description": "Profit before Tax as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "Tax preceding year": {
+    "short_name": "Tax Prev Ann",
+    "description": "Tax expense as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "Profit after tax preceding year": {
+    "short_name": "PAT Prev Ann",
+    "description": "Profit after Tax excluding extraordinary items as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "Extraordinary items preceding year": {
+    "short_name": "Extra Ord Prev Ann",
+    "description": "Extraordinary items as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "Net Profit preceding year": {
+    "short_name": "NP Prev Ann",
+    "description": "Net Profit as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "Dividend preceding year": {
+    "short_name": "Dividend Prev Ann",
+    "description": "Dividend paid as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "OPM preceding year": {
+    "short_name": "OPM Prev Ann",
+    "description": "Operating profit margin as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "NPM preceding year": {
+    "short_name": "NPM Prev Ann",
+    "description": "Net profit margin as per preceding annual results.",
+    "group": "annual_pl"
+  },
+  "Sales preceding quarter": {
+    "short_name": "Sales Prev Qtr",
+    "description": "Sales as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Operating profit preceding quarter": {
+    "short_name": "OP Prev Qtr",
+    "description": "Operating Profit as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Other income preceding quarter": {
+    "short_name": "Other Inc Prev Qtr",
+    "description": "Other Income as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "EBIDT preceding quarter": {
+    "short_name": "EBIDT Prev Qtr",
+    "description": "Earnings before Interest, Depreciation & Tax as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Depreciation preceding quarter": {
+    "short_name": "Dep Prev Qtr",
+    "description": "Depreciation as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "EBIT preceding quarter": {
+    "short_name": "EBIT Prev Qtr",
+    "description": "Earnings before Interest and Tax as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Interest preceding quarter": {
+    "short_name": "Interest Prev Qtr",
+    "description": "Interest as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Profit before tax preceding quarter": {
+    "short_name": "PBT Prev Qtr",
+    "description": "Profit before Tax as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Tax preceding quarter": {
+    "short_name": "Tax Prev Qtr",
+    "description": "Tax expense as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Profit after tax preceding quarter": {
+    "short_name": "PAT Prev Qtr",
+    "description": "Profit after Tax (excluding extraordinary items) as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Extraordinary items preceding quarter": {
+    "short_name": "Extra Ord Prev Qtr",
+    "description": "Extraordinary items as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Net Profit preceding quarter": {
+    "short_name": "NP Prev Qtr",
+    "description": "Net Profit as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "OPM preceding quarter": {
+    "short_name": "OPM Prev Qtr",
+    "description": "Operating profit margin as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "NPM preceding quarter": {
+    "short_name": "NPM Prev Qtr",
+    "description": "Net profit margin as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Equity Capital preceding quarter": {
+    "short_name": "Eq Cap Prev Qtr",
+    "description": "Equity Capital as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "EPS preceding quarter": {
+    "short_name": "EPS Prev Qtr",
+    "description": "Earning per share as per preceding quarterly results.",
+    "group": "quarter_pl"
+  },
+  "Book value preceding year": {
+    "short_name": "B.V. Prev Ann",
+    "description": "Book value per share: (Capital + Reserves) / Number of shares",
+    "group": "ratios"
+  },
+  "Return on capital employed preceding year": {
+    "short_name": "ROCE Prev Yr",
+    "description": "\n        Figures taken from second last annual report:\n        EBIT / Annual Average Capital Employed\n\n        Capital Employed: Share capital + Reserves + Borrowing\n        ",
+    "group": "ratios"
+  },
+  "Return on assets preceding year": {
+    "short_name": "ROA Prev Yr",
+    "description": "Net profit returns during preceding year on average of total assets employed.",
+    "group": "ratios"
+  },
+  "EPS preceding year": {
+    "short_name": "EPS Prev Ann",
+    "description": "Earnings per share as per preceding financial year.",
+    "group": "annual_pl"
+  },
+  "Return on equity preceding year": {
+    "short_name": "ROE Prev Ann",
+    "description": "Return on average equity capital during preceding year.",
+    "group": "ratios"
+  },
+  "Debt preceding year": {
+    "short_name": "Debt Prev Ann",
+    "description": "Total secured and unsecured loan preceding year.",
+    "group": "balance_sheet"
+  },
+  "Sales preceding 12months": {
+    "short_name": "Sales Prev 12M",
+    "description": "Sales during 12 months preceding latest quarter",
+    "group": "annual_pl"
+  },
+  "Net profit preceding 12months": {
+    "short_name": "Profit Prev 12M",
+    "description": "Net profit during 12 months preceding latest quarter",
+    "group": "annual_pl"
+  },
+  "Working capital preceding year": {
+    "short_name": "Work Cap PY",
+    "description": "Working capital (Current assets - current liabilities - short term borrowings) from preceding balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Number of Shareholders preceding quarter": {
+    "short_name": "No. of Share Holders Prev Qtr",
+    "description": "Number of shareholders as per previous quarterly filing",
+    "group": "ratios"
+  },
+  "Net block preceding year": {
+    "short_name": "Net Block PY",
+    "description": "Net block of fixed assets preceding year from balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Gross block preceding year": {
+    "short_name": "Gross Block PY",
+    "description": "Gross fixed assets block preceding year.",
+    "group": "balance_sheet"
+  },
+  "Capital work in progress preceding year": {
+    "short_name": "CWIP PY",
+    "description": "Capital work in progress (CWIP) from preceding year's balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Sales growth 3Years": {
+    "short_name": "Sales Var 3Yrs",
+    "description": "Compounded Sales Growth (CAGR) over last 3 years.",
+    "group": "annual_pl most_used"
+  },
+  "Sales growth 5Years": {
+    "short_name": "Sales Var 5Yrs",
+    "description": "Compounded Sales Growth (CAGR) over last 5 years.",
+    "group": "annual_pl most_used"
+  },
+  "Profit growth 3Years": {
+    "short_name": "Profit Var 3Yrs",
+    "description": "Compounded profit growth (CAGR) over last 3 years. Profit is profit after tax excluding exceptional items.",
+    "group": "annual_pl most_used"
+  },
+  "Profit growth 5Years": {
+    "short_name": "Profit Var 5Yrs",
+    "description": "Compounded profit growth (CAGR) over last 5 years. Profit is profit after tax excluding exceptional items.",
+    "group": "annual_pl most_used"
+  },
+  "Average return on equity 5Years": {
+    "short_name": "ROE 5Yr",
+    "description": "Weighted average of return on equity over last 5 years.",
+    "group": "ratios most_used"
+  },
+  "Average return on equity 3Years": {
+    "short_name": "ROE 3Yr",
+    "description": "Weighted average of return on equity over last 3 years.",
+    "group": "ratios most_used"
+  },
+  "Return over 1year": {
+    "short_name": "1Yr return",
+    "description": "Price change over last year in percent",
+    "group": "price most_used"
+  },
+  "Return over 3years": {
+    "short_name": "3Yrs return",
+    "description": "Price CAGR over last 3 years. Percentage change compounded annually.",
+    "group": "price most_used"
+  },
+  "Return over 5years": {
+    "short_name": "5Yrs return",
+    "description": "Price CAGR over last 5 years. Percentage change compounded annually.",
+    "group": "price most_used"
+  },
+  "Number of equity shares 10years back": {
+    "short_name": "No. Eq. Shares 10 Yrs",
+    "description": "Adjusted number of equity shares 10 years back. Shares are adjusted for bonuses and splits.",
+    "group": "ratios"
+  },
+  "Free cash flow 3years": {
+    "short_name": "Free Cash Flow 3Yrs",
+    "description": "Sum of (Cash Flow from operating activities - Fixed assets purchased + Fixed assets sold) over last 3 years",
+    "group": "cash_flow"
+  },
+  "Free cash flow 5years": {
+    "short_name": "Free Cash Flow 5Yrs",
+    "description": "Sum of (Cash Flow from operating activities - Fixed assets purchased + Fixed assets sold) over last 5 years",
+    "group": "cash_flow"
+  },
+  "Free cash flow 7years": {
+    "short_name": "Free Cash Flow 7Yrs",
+    "description": "Sum of (Cash Flow from operating activities - Fixed assets purchased + Fixed assets sold) over last 7 years",
+    "group": "cash_flow"
+  },
+  "Free cash flow 10years": {
+    "short_name": "Free Cash Flow 10Yrs",
+    "description": "Sum of (Cash Flow from operating activities - Fixed assets purchased + Fixed assets sold) over last 10 years",
+    "group": "cash_flow"
+  },
+  "Sales preceding year quarter": {
+    "short_name": "Sales PY Qtr",
+    "description": "Sales as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Operating profit preceding year quarter": {
+    "short_name": "OP PY Qtr",
+    "description": "Operating Profit as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Other income preceding year quarter": {
+    "short_name": "Other Inc PY Qtr",
+    "description": "Other Income as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "EBIDT preceding year quarter": {
+    "short_name": "EBIDT PY Qtr",
+    "description": "Earnings before Interest, Depreciation & Tax as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Depreciation preceding year quarter": {
+    "short_name": "Dep PY Qtr",
+    "description": "Depreciation as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "EBIT preceding year quarter": {
+    "short_name": "EBIT PY Qtr",
+    "description": "Earnings before Interest and Tax as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Interest preceding year quarter": {
+    "short_name": "Interest PY Qtr",
+    "description": "Interest as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Profit before tax preceding year quarter": {
+    "short_name": "PBT PY Qtr",
+    "description": "Profit before Tax as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Tax preceding year quarter": {
+    "short_name": "Tax PY Qtr",
+    "description": "Tax expense as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Profit after tax preceding year quarter": {
+    "short_name": "PAT PY Qtr",
+    "description": "Profit after Tax excluding extra-ordinary items as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Extraordinary items preceding year quarter": {
+    "short_name": "Extra Ord Item PY Qt",
+    "description": "Extraordinary items as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Net Profit preceding year quarter": {
+    "short_name": "NP PY Qtr",
+    "description": "Net Profit as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "OPM preceding year quarter": {
+    "short_name": "OPM PY Qtr",
+    "description": "Operating profit margin as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "NPM preceding year quarter": {
+    "short_name": "NPM PY Qtr",
+    "description": "Net profit margin as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Equity Capital preceding year quarter": {
+    "short_name": "Eq Cap PY Qtr",
+    "description": "Equity Capital as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "EPS preceding year quarter": {
+    "short_name": "EPS PY Qtr",
+    "description": "Earnings Per Share as per previous year's corresponding latest quarter.",
+    "group": "quarter_pl"
+  },
+  "Book value 3years back": {
+    "short_name": "BV 3yrs back",
+    "description": "\n        Book value per share 3years back\n        Book value = (Capital + Reserves) / Number of eq. shares 3 years back\n\n        - No. of equity shares are adjusted for splits and bonuses\n        ",
+    "group": "ratios"
+  },
+  "Book value 5years back": {
+    "short_name": "BV 5yrs back",
+    "description": "\n        Book value per share 5years back\n        Book value = (Capital + Reserves) / Number of eq. shares 5 years back\n\n        - No. of equity shares are adjusted for splits and bonuses\n        ",
+    "group": "ratios"
+  },
+  "Book value 10years back": {
+    "short_name": "BV 10yrs back",
+    "description": "\n        Book value per share 10years back\n        Book value = (Capital + Reserves) / Number of eq. shares 10 years back\n\n        - No. of equity shares are adjusted for splits and bonuses\n        ",
+    "group": "ratios"
+  },
+  "Inventory turnover ratio 3Years back": {
+    "short_name": "Inven TO 3Yr",
+    "description": "Inventory turnover ratio 3 years back.",
+    "group": "ratios"
+  },
+  "Inventory turnover ratio 5Years back": {
+    "short_name": "Inven TO 5Yr",
+    "description": "Inventory turnover ratio 5 years back.",
+    "group": "ratios"
+  },
+  "Inventory turnover ratio 7Years back": {
+    "short_name": "Inven TO 7Yr",
+    "description": "Inventory turnover ratio 7 years back.",
+    "group": "ratios"
+  },
+  "Inventory turnover ratio 10Years back": {
+    "short_name": "Inven TO 10Yr",
+    "description": "Inventory turnover ratio 10 years back.",
+    "group": "ratios"
+  },
+  "Sales growth 10years median": {
+    "short_name": "Med Sales Gwth 10Yrs",
+    "description": "Median sales growth growth of last 10 years",
+    "group": "annual_pl"
+  },
+  "Sales growth 5years median": {
+    "short_name": "Med Sales Gwth 5Yrs",
+    "description": "Median sales growth growth of last 5 years",
+    "group": "annual_pl"
+  },
+  "Sales growth 7Years": {
+    "short_name": "Sales Var 7Yrs",
+    "description": "Compounded Sales Growth (CAGR) over last 7 years.",
+    "group": "annual_pl"
+  },
+  "Sales growth 10Years": {
+    "short_name": "Sales Var 10Yrs",
+    "description": "Compounded Sales Growth (CAGR) over last 10 years.",
+    "group": "annual_pl"
+  },
+  "EBIDT growth 3Years": {
+    "short_name": "EBIDT Var 3Yrs",
+    "description": "Compounded Growth in EBIDT (CAGR) over last 3 years.",
+    "group": "annual_pl"
+  },
+  "EBIDT growth 5Years": {
+    "short_name": "EBIDT Var 5Yrs",
+    "description": "Compounded Growth in EBIDT (CAGR) over last 5 years.",
+    "group": "annual_pl"
+  },
+  "EBIDT growth 7Years": {
+    "short_name": "EBIDT Var 7Yrs",
+    "description": "Compounded Growth in EBIDT (CAGR) over last 7 years.",
+    "group": "annual_pl"
+  },
+  "EBIDT growth 10Years": {
+    "short_name": "EBIDT Var 10Yrs",
+    "description": "Compounded Growth in EBIDT (CAGR) over last 10 years.",
+    "group": "annual_pl"
+  },
+  "EPS growth 3Years": {
+    "short_name": "EPS Var 3Yrs",
+    "description": "Compounded Growth in EPS (CAGR) over last 3 years.",
+    "group": "annual_pl"
+  },
+  "EPS growth 5Years": {
+    "short_name": "EPS Var 5Yrs",
+    "description": "Compounded Growth in EPS (CAGR) over last 5 years.",
+    "group": "annual_pl"
+  },
+  "EPS growth 7Years": {
+    "short_name": "EPS Var 7Yrs",
+    "description": "Compounded Growth in EPS (CAGR) over last 7 years.",
+    "group": "annual_pl"
+  },
+  "EPS growth 10Years": {
+    "short_name": "EPS Var 10Yrs",
+    "description": "Compounded Growth in EPS (CAGR) over last 10 years.",
+    "group": "annual_pl"
+  },
+  "Profit growth 7Years": {
+    "short_name": "Profit Var 7Yrs",
+    "description": "Compounded profit growth (CAGR) over last 7 years. Profit is profit after tax excluding exceptional items.",
+    "group": "annual_pl"
+  },
+  "Profit growth 10Years": {
+    "short_name": "Profit Var 10Yrs",
+    "description": "Compounded profit growth (CAGR) over last 10 years. Profit is profit after tax excluding exceptional items.",
+    "group": "annual_pl"
+  },
+  "Exports percentage 3Years back": {
+    "short_name": "Export 3Yr",
+    "description": "Exports percentage of total exports 3 years back.",
+    "group": "ratios"
+  },
+  "Exports percentage 5Years back": {
+    "short_name": "Export 5Yr",
+    "description": "Exports percentage of total exports 5 years back.",
+    "group": "ratios"
+  },
+  "Average 5years dividend": {
+    "short_name": "Div 5Yrs",
+    "description": "Average dividend per year paid in last 5 years.",
+    "group": "ratios"
+  },
+  "Average return on capital employed 3Years": {
+    "short_name": "ROCE 3Yr",
+    "description": "Average return on capital employed over last 3 years",
+    "group": "ratios"
+  },
+  "Average return on capital employed 5Years": {
+    "short_name": "ROCE 5Yr",
+    "description": "Average return on capital employed over last 5 years",
+    "group": "ratios"
+  },
+  "Average return on capital employed 7Years": {
+    "short_name": "ROCE 7Yr",
+    "description": "Average return on capital employed over last 7 years",
+    "group": "ratios"
+  },
+  "Average return on capital employed 10Years": {
+    "short_name": "ROCE 10Yr",
+    "description": "Average return on capital employed over last 10 years",
+    "group": "ratios"
+  },
+  "Average return on equity 10Years": {
+    "short_name": "ROE 10Yr",
+    "description": "Weighted average of return on capital employed over last 10 years.",
+    "group": "ratios"
+  },
+  "Average return on equity 7Years": {
+    "short_name": "ROE 7Yr",
+    "description": "Weighted average of return on equity over last 7 years.",
+    "group": "ratios"
+  },
+  "Return on equity 5years growth": {
+    "short_name": "ROE 5Yr Var",
+    "description": "Compounded ROE growth over last 5 years.",
+    "group": "ratios"
+  },
+  "Operating cash flow 3years": {
+    "short_name": "CF Opr 3Yrs",
+    "description": "Sum of cash from operations over last 3 years.",
+    "group": "cash_flow"
+  },
+  "Operating cash flow 5years": {
+    "short_name": "CF Opr 5Yrs",
+    "description": "Sum of cash from operations over last 5 years.",
+    "group": "cash_flow"
+  },
+  "Operating cash flow 7years": {
+    "short_name": "CF Opr 7Yrs",
+    "description": "Sum of cash from operations over last 7 years.",
+    "group": "cash_flow"
+  },
+  "Operating cash flow 10years": {
+    "short_name": "CF Opr 10Yrs",
+    "description": "Sum of cash from operations over last 10 years.",
+    "group": "cash_flow"
+  },
+  "Investing cash flow 10years": {
+    "short_name": "CF Inv 10Yrs",
+    "description": "Cash from investing activity over last 10 years.",
+    "group": "cash_flow"
+  },
+  "Investing cash flow 7years": {
+    "short_name": "CF Inv 7Yrs",
+    "description": "Cash from investing activity over last 7 years.",
+    "group": "cash_flow"
+  },
+  "Investing cash flow 5years": {
+    "short_name": "CF Inv 5Yrs",
+    "description": "Cash from investing activity over last 5 years.",
+    "group": "cash_flow"
+  },
+  "Investing cash flow 3years": {
+    "short_name": "CF Inv 3Yrs",
+    "description": "Cash from investing activity over last 3 years.",
+    "group": "cash_flow"
+  },
+  "OPM 5Year": {
+    "short_name": "5Yr OPM",
+    "description": "Average operating profit margin during last 5 years.",
+    "group": "ratios"
+  },
+  "OPM 10Year": {
+    "short_name": "10Yr OPM",
+    "description": "Average operating profit margin during last 10 years.",
+    "group": "ratios"
+  },
+  "Working capital 3Years back": {
+    "short_name": "Work Cap 3Yr",
+    "description": "Working capital (Current assets - current liabilities - short term borrowings) from 3 years old balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Working capital 5Years back": {
+    "short_name": "Work Cap 5Yr",
+    "description": "Working capital (Current assets - current liabilities - short term borrowings) from 5 years old balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Working capital 7Years back": {
+    "short_name": "Work Cap 7Yr",
+    "description": "Working capital (Current assets - current liabilities - short term borrowings) from 7 years old balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Working capital 10Years back": {
+    "short_name": "Work Cap 10Yr",
+    "description": "Working capital (Current assets - current liabilities - short term borrowings) from 10 years old balance sheet.",
+    "group": "balance_sheet"
+  },
+  "Debt 3Years back": {
+    "short_name": "Debt 3Yrs",
+    "description": "Total secured and unsecured loan 3 years back.",
+    "group": "balance_sheet"
+  },
+  "Debt 5Years back": {
+    "short_name": "Debt 5Yrs",
+    "description": "Total secured and unsecured loan 5 years back.",
+    "group": "balance_sheet"
+  },
+  "Debt 7Years back": {
+    "short_name": "Debt 7Yrs",
+    "description": "Total secured and unsecured loan 7 years back.",
+    "group": "balance_sheet"
+  },
+  "Debt 10Years back": {
+    "short_name": "Debt 10Yrs",
+    "description": "Total secured and unsecured loan 10 Years back.",
+    "group": "balance_sheet"
+  },
+  "Number of Shareholders 1year back": {
+    "short_name": "No. of Share Holders 1Yr",
+    "description": "Number of shareholders one year back",
+    "group": "ratios"
+  },
+  "Change in promoter holding 3Years": {
+    "short_name": "Chg in Prom Hold 3Yr",
+    "description": "Change in promoters holding over last 3 years.",
+    "group": "annual_pl"
+  },
+  "Average dividend payout 3years": {
+    "short_name": "Avg Div Payout 3Yrs",
+    "description": "Weighted average dividend payout from net profits over last 3 years.",
+    "group": "ratios"
+  },
+  "Net block 3Years back": {
+    "short_name": "Net Block 3Yrs Back",
+    "description": "Net block of fixed assets 3 years back.",
+    "group": "balance_sheet"
+  },
+  "Net block 5Years back": {
+    "short_name": "Net Block 5Yrs Back",
+    "description": "Net Block of fixed assets 5 years back.",
+    "group": "balance_sheet"
+  },
+  "Net block 7Years back": {
+    "short_name": "Net Block 7Yrs Back",
+    "description": "Net block of fixed assets 7 years back.",
+    "group": "balance_sheet"
+  },
+  "Cash 3Years back": {
+    "short_name": "Cash 3Yrs Back",
+    "description": "Cash and equivalents in 3 years back balance sheet.",
+    "group": "cash_flow"
+  },
+  "Cash 5Years back": {
+    "short_name": "Cash 5Yrs Back",
+    "description": "Cash and equivalents in 5 years old balance sheet.",
+    "group": "cash_flow"
+  },
+  "Cash 7Years back": {
+    "short_name": "Cash 7Yrs Back",
+    "description": "Cash and equivalents from 7 years old balance sheet.",
+    "group": "cash_flow"
+  },
+  "Average debtor days 3years": {
+    "short_name": "Debtor days 3yrs",
+    "description": "Average Debtor days over last 3 years",
+    "group": "ratios"
+  },
+  "Debtor days 3years back": {
+    "short_name": "Debtor days 3yrs back",
+    "description": "Debtor days as per 3 annual reports back.",
+    "group": "ratios"
+  },
+  "Debtor days 5years back": {
+    "short_name": "Debtor days 5yrs back",
+    "description": "Debtor days as per 5 annual reports back.",
+    "group": "ratios"
+  },
+  "Return on assets 5years": {
+    "short_name": "ROA 5Yr",
+    "description": "Average Return on Assets over last 5 Years",
+    "group": "ratios"
+  },
+  "Return on assets 3years": {
+    "short_name": "ROA 3Yr",
+    "description": "( Net Profit / Total assets ) of 3 years",
+    "group": "ratios"
+  },
+  "Historical PE 3Years": {
+    "short_name": "3Yrs PE",
+    "description": "Median price to earning ratio during last 3 years.",
+    "group": "ratios"
+  },
+  "Historical PE 10Years": {
+    "short_name": "10Yrs PE",
+    "description": "Median price to earning ratio of last 10 years.",
+    "group": "ratios"
+  },
+  "Historical PE 7Years": {
+    "short_name": "7Yrs PE",
+    "description": "Median price to earning ratio during last 7 years.",
+    "group": "ratios"
+  },
+  "Historical PE 5Years": {
+    "short_name": "5Yrs PE",
+    "description": "Median price to earning ratio during last 5 years.",
+    "group": "ratios"
+  },
+  "Volume 1year average": {
+    "short_name": "Avg Vol 1Yr",
+    "description": "Average quantity traded over last 1 year across all exchanges.",
+    "group": "price"
+  },
+  "Average Earnings 5Year": {
+    "short_name": "Avg PAT 5Yrs",
+    "description": "Average profit after tax during last 5 annual results.",
+    "group": "annual_pl"
+  },
+  "Average Earnings 10Year": {
+    "short_name": "Avg PAT 10Yrs",
+    "description": "Average profit during last 10 annual results.",
+    "group": "annual_pl"
+  },
+  "Average EBIT 5Year": {
+    "short_name": "Avg EBIT 5Yrs",
+    "description": "Average EBIT of last 5 annual results.",
+    "group": "annual_pl"
+  },
+  "Average EBIT 10Year": {
+    "short_name": "Avg EBIT 10Yrs",
+    "description": "Average EBIT of 10 annual results.",
+    "group": "annual_pl"
+  },
+  "Market Capitalization 3years back": {
+    "short_name": "Mar Cap 3yrs back",
+    "description": "Market cap at the end of financial year 3 years back.",
+    "group": "ratios"
+  },
+  "Market Capitalization 5years back": {
+    "short_name": "Mar Cap 5yrs back",
+    "description": "Market cap at the end of financial year 5 years back.",
+    "group": "ratios"
+  },
+  "Market Capitalization 7years back": {
+    "short_name": "Mar Cap 7yrs back",
+    "description": "Market cap at the end of financial year 7 years back.",
+    "group": "ratios"
+  },
+  "Market Capitalization 10years back": {
+    "short_name": "Mar Cap 10yrs back",
+    "description": "Market cap at the end of financial year 10 years back.",
+    "group": "ratios"
+  },
+  "Average Working Capital Days 3years": {
+    "short_name": "WC Days 3yrs",
+    "description": "Average Working Capital days over last 3 years",
+    "group": "ratios"
+  },
+  "Return over 7years": {
+    "short_name": "7Yrs return",
+    "description": "Price CAGR over last 7 years. Percentage change compounded annually.",
+    "group": "price"
+  },
+  "Return over 10years": {
+    "short_name": "10Yrs return",
+    "description": "Price CAGR over last 10 years. Percentage change compounded annually.",
+    "group": "price"
+  },
+  "Change in FII holding 3Years": {
+    "short_name": "Chg in FII Hold 3Yr",
+    "description": "Change in FII holding over last 3 years.",
+    "group": "ratios"
+  },
+  "Change in DII holding 3Years": {
+    "short_name": "Chg in DII Hold 3Yr",
+    "description": "Change in DII holding over last 3 years.",
+    "group": "ratios"
+  },
+  "Name": {
+    "short_name": "Name",
+    "description": "Company name",
+    "group": "always_present"
+  },
+  "CMP Rs.": {
+    "short_name": "CMP Rs.",
+    "description": "Current market price",
+    "group": "always_present"
+  },
+  "S.No.": {
+    "short_name": "S.No.",
+    "description": "Serial number",
+    "group": "always_present"
+  }
+}
