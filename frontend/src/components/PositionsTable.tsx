@@ -52,8 +52,8 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         header: 'STOCK',
         cell: ({ row }) => (
           <div>
-            <div className="font-medium text-gray-900">{row.original.name}</div>
-            <div className="text-sm text-gray-500">{row.original.ticker}</div>
+            <div className="font-semibold text-slate-100">{row.original.name}</div>
+            <div className="text-sm text-slate-400 font-mono">{row.original.ticker}</div>
           </div>
         ),
         size: 200,
@@ -62,7 +62,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         accessorKey: 'entry_price',
         header: 'ENTRY',
         cell: ({ row }) => (
-          <span className="tabular-nums text-gray-900">
+          <span className="font-mono metric-value text-slate-200">
             {formatCurrency(row.original.entry_price)}
           </span>
         ),
@@ -72,7 +72,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         accessorKey: 'currentPrice',
         header: 'CURRENT',
         cell: ({ row }) => (
-          <span className="tabular-nums text-gray-900">
+          <span className="font-mono metric-value text-slate-200">
             {row.original.currentPrice
               ? formatCurrency(row.original.currentPrice)
               : '-'}
@@ -86,7 +86,9 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         cell: ({ row }) => {
           const pnl = row.original.pnlAbsolute || 0;
           return (
-            <span className={`tabular-nums font-medium ${getNumberColorClass(pnl)}`}>
+            <span className={`font-mono metric-value font-semibold ${
+              pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'
+            }`}>
               {formatCurrency(pnl, true)}
             </span>
           );
@@ -99,7 +101,9 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         cell: ({ row }) => {
           const pnlPct = row.original.pnlPct || 0;
           return (
-            <span className={`tabular-nums font-medium ${getNumberColorClass(pnlPct)}`}>
+            <span className={`font-mono metric-value font-semibold ${
+              pnlPct >= 0 ? 'text-emerald-400' : 'text-rose-400'
+            }`}>
               {formatPercent(pnlPct)}
             </span>
           );
@@ -111,10 +115,10 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         header: 'ALLOCATION',
         cell: ({ row }) => (
           <div>
-            <div className="tabular-nums text-gray-900">
+            <div className="font-mono metric-value text-slate-200">
               {formatCurrency(row.original.allocation_amount)}
             </div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-slate-500 font-mono">
               {row.original.allocation_pct.toFixed(1)}%
             </div>
           </div>
@@ -125,7 +129,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         accessorKey: 'stop_loss_price',
         header: 'STOP LOSS',
         cell: ({ row }) => (
-          <span className="tabular-nums text-danger-600">
+          <span className="font-mono metric-value text-rose-400 font-medium">
             {formatCurrency(row.original.stop_loss_price)}
           </span>
         ),
@@ -135,7 +139,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         accessorKey: 'target_price',
         header: 'TARGET',
         cell: ({ row }) => (
-          <span className="tabular-nums text-success-600">
+          <span className="font-mono metric-value text-emerald-400 font-medium">
             {formatCurrency(row.original.target_price)}
           </span>
         ),
@@ -145,7 +149,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         accessorKey: 'sector',
         header: 'SECTOR',
         cell: ({ row }) => (
-          <span className="inline-flex items-center px-2 py-1 rounded-md bg-gray-100 text-xs font-medium text-gray-700">
+          <span className="inline-flex items-center px-2 py-1 rounded-md bg-slate-800/50 border border-slate-700 text-xs font-medium text-slate-300">
             {row.original.sector || 'Unknown'}
           </span>
         ),
@@ -207,18 +211,18 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
       {/* Table Header with Search and Actions */}
       <div className="flex items-center justify-between mb-4">
         <div className="relative w-64">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={18} />
           <input
             type="text"
             placeholder="Search stocks..."
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-info-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
           />
         </div>
         <button
           onClick={exportToCSV}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          className="glass-card glass-card-hover flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-200 rounded-lg"
         >
           <Download size={16} />
           Export CSV
@@ -226,18 +230,18 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="glass-card rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             {/* Table Header */}
-            <thead className="bg-gray-50 border-b-2 border-gray-200">
+            <thead className="bg-slate-900/50 border-b-2 border-slate-800">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   <th className="w-12 px-4 py-3"></th>
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="px-4 py-3 text-left text-caption uppercase text-gray-500 font-semibold cursor-pointer hover:bg-gray-100 transition-colors"
+                      className="px-4 py-3 text-left text-caption uppercase text-slate-400 font-semibold cursor-pointer hover:bg-slate-800/50 transition-colors tracking-wider"
                       style={{ width: header.column.getSize() }}
                       onClick={header.column.getToggleSortingHandler()}
                     >
@@ -248,12 +252,12 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
                         )}
                         {header.column.getIsSorted() ? (
                           header.column.getIsSorted() === 'asc' ? (
-                            <ChevronUp size={14} />
+                            <ChevronUp size={14} className="text-emerald-400" />
                           ) : (
-                            <ChevronDown size={14} />
+                            <ChevronDown size={14} className="text-emerald-400" />
                           )
                         ) : (
-                          <ChevronsUpDown size={14} className="text-gray-300" />
+                          <ChevronsUpDown size={14} className="text-slate-600" />
                         )}
                       </div>
                     </th>
@@ -266,7 +270,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
             <tbody>
               {table.getRowModel().rows.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length + 1} className="px-4 py-12 text-center text-gray-500">
+                  <td colSpan={columns.length + 1} className="px-4 py-12 text-center text-slate-400">
                     No stocks found
                   </td>
                 </tr>
@@ -274,15 +278,15 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
                 table.getRowModel().rows.map((row) => (
                   <React.Fragment key={row.id}>
                     {/* Main Row */}
-                    <tr className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <tr className="border-b border-slate-800 hover:bg-slate-800/30 transition-colors">
                       <td className="px-4 py-3">
                         <button
                           onClick={() => toggleRowExpanded(row.original.id)}
-                          className="p-1 hover:bg-gray-200 rounded transition-colors"
+                          className="p-1 hover:bg-slate-700/50 rounded transition-colors"
                         >
                           <ChevronRight
                             size={16}
-                            className={`text-gray-500 transition-transform ${
+                            className={`text-slate-400 transition-transform ${
                               expandedRows[row.original.id] ? 'rotate-90' : ''
                             }`}
                           />
@@ -297,16 +301,16 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
 
                     {/* Expanded Row */}
                     {expandedRows[row.original.id] && (
-                      <tr className="bg-gray-50 border-b border-gray-100">
+                      <tr className="bg-slate-900/50 border-b border-slate-800">
                         <td colSpan={columns.length + 1} className="px-4 py-6">
                           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Investment Thesis */}
                             {row.original.rationale && (
                               <div>
-                                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                                <h4 className="text-sm font-semibold text-slate-200 mb-2 uppercase tracking-wider">
                                   Investment Thesis
                                 </h4>
-                                <p className="text-sm text-gray-600 leading-relaxed">
+                                <p className="text-sm text-slate-400 leading-relaxed">
                                   {row.original.rationale}
                                 </p>
                               </div>
@@ -315,19 +319,19 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
                             {/* Investment View */}
                             {row.original.investment_view && (
                               <div>
-                                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                                <h4 className="text-sm font-semibold text-slate-200 mb-2 uppercase tracking-wider">
                                   Investment View
                                 </h4>
                                 <div className="space-y-2 text-sm">
                                   <div>
-                                    <span className="text-gray-500">Market Outlook:</span>{' '}
-                                    <span className="text-gray-900">
+                                    <span className="text-slate-500">Market Outlook:</span>{' '}
+                                    <span className="text-slate-300">
                                       {row.original.investment_view.market_outlook}
                                     </span>
                                   </div>
                                   <div>
-                                    <span className="text-gray-500">Holding Period:</span>{' '}
-                                    <span className="text-gray-900">
+                                    <span className="text-slate-500">Holding Period:</span>{' '}
+                                    <span className="text-slate-300">
                                       {row.original.investment_view.holding_period}
                                     </span>
                                   </div>
@@ -338,15 +342,15 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
                             {/* Key Metrics */}
                             {row.original.key_metrics && (
                               <div>
-                                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                                <h4 className="text-sm font-semibold text-slate-200 mb-2 uppercase tracking-wider">
                                   Key Metrics
                                 </h4>
                                 <div className="grid grid-cols-2 gap-2 text-sm">
                                   {Object.entries(row.original.key_metrics.metrics).map(
                                     ([key, value]) => (
                                       <div key={key}>
-                                        <span className="text-gray-500">{key}:</span>{' '}
-                                        <span className="text-gray-900 font-medium">{value}</span>
+                                        <span className="text-slate-500">{key}:</span>{' '}
+                                        <span className="text-slate-300 font-medium font-mono">{value}</span>
                                       </div>
                                     )
                                   )}
@@ -357,10 +361,10 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
                             {/* News Sentiment */}
                             {row.original.news_sentiment && (
                               <div>
-                                <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                                <h4 className="text-sm font-semibold text-slate-200 mb-2 uppercase tracking-wider">
                                   News Sentiment
                                 </h4>
-                                <p className="text-sm text-gray-600 leading-relaxed">
+                                <p className="text-sm text-slate-400 leading-relaxed">
                                   {row.original.news_sentiment}
                                 </p>
                               </div>
@@ -378,9 +382,9 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
       </div>
 
       {/* Table Footer */}
-      <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
+      <div className="mt-4 flex items-center justify-between text-sm text-slate-500">
         <div>
-          Showing {table.getRowModel().rows.length} of {stocks.length} positions
+          Showing <span className="text-slate-300 font-medium">{table.getRowModel().rows.length}</span> of <span className="text-slate-300 font-medium">{stocks.length}</span> positions
         </div>
       </div>
     </div>

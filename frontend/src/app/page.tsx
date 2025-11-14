@@ -111,10 +111,10 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-info-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading your portfolio...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-emerald-500 mx-auto mb-4"></div>
+          <p className="text-slate-300 text-lg font-light">Loading your portfolio...</p>
         </div>
       </div>
     );
@@ -122,14 +122,14 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="bg-white rounded-xl border border-gray-200 shadow-card p-8 max-w-md">
-          <AlertCircle className="w-16 h-16 text-danger-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">Error</h2>
-          <p className="text-gray-600 text-center">{error}</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="glass-card rounded-xl p-8 max-w-md">
+          <AlertCircle className="w-16 h-16 text-rose-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-slate-50 text-center mb-2">Error</h2>
+          <p className="text-slate-300 text-center">{error}</p>
           <button
             onClick={fetchPortfolio}
-            className="mt-6 w-full bg-info-600 text-white py-3 rounded-lg hover:bg-info-700 transition-colors flex items-center justify-center gap-2"
+            className="mt-6 w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition-all duration-300 flex items-center justify-center gap-2 font-medium"
           >
             <RefreshCw className="w-5 h-5" />
             Retry
@@ -141,52 +141,70 @@ export default function Home() {
 
   if (!portfolio) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="bg-white rounded-xl border border-gray-200 shadow-card p-8 max-w-md text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">No Portfolio Found</h2>
-          <p className="text-gray-600">Create a portfolio to get started.</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="glass-card rounded-xl p-8 max-w-md text-center">
+          <h2 className="text-2xl font-bold text-slate-50 mb-2">No Portfolio Found</h2>
+          <p className="text-slate-300">Create a portfolio to get started.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
+    <main className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto space-y-8">
+        {/* Page Header with orchestrated animation */}
+        <div className="animate-fade-in-up">
+          <h1 className="text-display-lg font-display font-black text-slate-50 mb-2 tracking-tight">
+            Portfolio Dashboard
+          </h1>
+          <p className="text-slate-400 text-lg font-light">
+            AI-Powered Portfolio Management
+          </p>
+        </div>
+
         {/* Portfolio Value Chart */}
         {performance && (
-          <PortfolioValueChart
-            initialCapital={portfolio?.total_capital || 0}
-            currentValue={performance.current_value}
-            totalPnlPct={performance.pnl_pct}
-            totalPnlAbsolute={performance.pnl_absolute}
-            dayReturnPct={performance.day_return_pct}
-            dayReturnAbsolute={performance.day_return_absolute}
-            historyData={portfolioHistory}
-            loading={!performance}
-          />
+          <div className="animate-fade-in-up animate-delay-100">
+            <PortfolioValueChart
+              initialCapital={portfolio?.total_capital || 0}
+              currentValue={performance.current_value}
+              totalPnlPct={performance.pnl_pct}
+              totalPnlAbsolute={performance.pnl_absolute}
+              dayReturnPct={performance.day_return_pct}
+              dayReturnAbsolute={performance.day_return_absolute}
+              historyData={portfolioHistory}
+              loading={!performance}
+            />
+          </div>
         )}
 
         {/* Performance Metrics */}
-        <PerformanceMetrics performance={performance} loading={!performance} />
+        <div className="animate-fade-in-up animate-delay-200">
+          <PerformanceMetrics performance={performance} loading={!performance} />
+        </div>
 
         {/* Benchmark Comparison */}
-        <BenchmarkComparison
-          comparison={benchmarks}
-          loading={!benchmarks}
-          onPeriodChange={(period) => fetchBenchmarks(period)}
-        />
+        <div className="animate-fade-in-up animate-delay-300">
+          <BenchmarkComparison
+            comparison={benchmarks}
+            loading={!benchmarks}
+            onPeriodChange={(period) => fetchBenchmarks(period)}
+          />
+        </div>
 
         {/* Latest Manager Update */}
-        <ManagerUpdateCard update={latestUpdate} loading={!latestUpdate} />
+        <div className="animate-fade-in-up animate-delay-400">
+          <ManagerUpdateCard update={latestUpdate} loading={!latestUpdate} />
+        </div>
 
         {/* Portfolio Holdings Table */}
-        <div>
+        <div className="animate-fade-in-up animate-delay-500">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Portfolio Holdings</h2>
-              <p className="text-sm text-gray-500 mt-1">
-                {portfolio.stocks.length} position{portfolio.stocks.length !== 1 ? 's' : ''} • {portfolio.profile} profile
+              <h2 className="text-heading-xl font-display text-slate-50">Portfolio Holdings</h2>
+              <p className="text-sm text-slate-400 mt-1 font-light">
+                {portfolio.stocks.length} position{portfolio.stocks.length !== 1 ? 's' : ''} • <span className="text-gold-400 font-medium">{portfolio.profile}</span> profile
               </p>
             </div>
             <button
@@ -197,7 +215,7 @@ export default function Home() {
                 fetchLatestUpdate();
                 fetchPortfolioHistory();
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-700 text-sm font-medium"
+              className="glass-card glass-card-hover flex items-center gap-2 px-4 py-2 rounded-lg text-slate-200 text-sm font-medium"
             >
               <RefreshCw className="w-4 h-4" />
               Refresh All
@@ -211,8 +229,8 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <div className="text-center text-gray-500 text-sm py-8 border-t border-gray-200">
-          <p className="font-medium">Portfolio Agent - AI-Powered Portfolio Management</p>
+        <div className="text-center text-slate-500 text-sm py-8 border-t border-slate-800 animate-fade-in-up animate-delay-600">
+          <p className="font-medium text-slate-400">Portfolio Agent - AI-Powered Portfolio Management</p>
           <p className="mt-1 text-xs">Last updated: {new Date(portfolio.created_at).toLocaleString()}</p>
         </div>
       </div>

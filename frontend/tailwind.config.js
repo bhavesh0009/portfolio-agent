@@ -8,80 +8,85 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['var(--font-display)', 'serif'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'monospace'],
       },
       fontSize: {
-        'display': ['48px', { lineHeight: '1.2', fontWeight: '700' }],
+        'display-xl': ['72px', { lineHeight: '1.1', fontWeight: '900', letterSpacing: '-0.02em' }],
+        'display-lg': ['56px', { lineHeight: '1.1', fontWeight: '900', letterSpacing: '-0.02em' }],
+        'display': ['48px', { lineHeight: '1.2', fontWeight: '700', letterSpacing: '-0.01em' }],
+        'heading-xl': ['36px', { lineHeight: '1.2', fontWeight: '600' }],
+        'heading-lg': ['30px', { lineHeight: '1.3', fontWeight: '600' }],
+        'number-xl': ['48px', { lineHeight: '1.2', fontWeight: '700' }],
         'number-lg': ['32px', { lineHeight: '1.3', fontWeight: '700' }],
         'number-md': ['18px', { lineHeight: '1.4', fontWeight: '600' }],
         'number-sm': ['14px', { lineHeight: '1.5', fontWeight: '500' }],
         'caption': ['11px', { lineHeight: '1.5', fontWeight: '400', letterSpacing: '0.5px' }],
       },
       colors: {
-        // Success/Gains palette
-        success: {
-          50: '#ECFDF5',
-          100: '#D1FAE5',
-          200: '#A7F3D0',
-          300: '#6EE7B7',
-          400: '#34D399',
-          500: '#10B981',
+        // Navy - Dominant Trust & Depth
+        navy: {
+          950: '#0a1628',
+          900: '#0f2744',
+          800: '#1a3a5c',
+          700: '#234d7b',
+          600: '#2e5f9a',
+        },
+        // Emerald - Growth & Success (sophisticated green)
+        emerald: {
+          400: '#34d399',
+          500: '#10b981',
           600: '#059669',
           700: '#047857',
-          800: '#065F46',
-          900: '#064E3B',
         },
-        // Danger/Losses palette
+        // Rose - Alert & Risk (sophisticated red)
+        rose: {
+          400: '#fb7185',
+          500: '#f43f5e',
+          600: '#e11d48',
+        },
+        // Amber/Gold - Premium & Warning
+        amber: {
+          400: '#fbbf24',
+          500: '#f59e0b',
+        },
+        gold: {
+          400: '#fbbf24',
+          500: '#f59e0b',
+        },
+        // Slate - Sophisticated Neutrals
+        slate: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+        },
+        // Legacy aliases for backwards compatibility
+        success: {
+          400: '#34d399',
+          500: '#10b981',
+          600: '#059669',
+        },
         danger: {
-          50: '#FEF2F2',
-          100: '#FEE2E2',
-          200: '#FECACA',
-          300: '#FCA5A5',
-          400: '#F87171',
-          500: '#EF4444',
-          600: '#DC2626',
-          700: '#B91C1C',
-          800: '#991B1B',
-          900: '#7F1D1D',
+          400: '#fb7185',
+          500: '#f43f5e',
+          600: '#e11d48',
         },
-        // Info/Interactive palette
-        info: {
-          50: '#EFF6FF',
-          100: '#DBEAFE',
-          200: '#BFDBFE',
-          300: '#93C5FD',
-          400: '#60A5FA',
-          500: '#3B82F6',
-          600: '#2563EB',
-          700: '#1D4ED8',
-          800: '#1E40AF',
-          900: '#1E3A8A',
-        },
-        // Warning palette
         warning: {
-          50: '#FFFBEB',
-          100: '#FEF3C7',
-          200: '#FDE68A',
-          300: '#FCD34D',
-          400: '#FBBF24',
-          500: '#F59E0B',
-          600: '#D97706',
-          700: '#B45309',
-          800: '#92400E',
-          900: '#78350F',
+          400: '#fbbf24',
+          500: '#f59e0b',
         },
-        // Keep primary (blue) for backwards compatibility
-        primary: {
-          50: '#EFF6FF',
-          100: '#DBEAFE',
-          200: '#BFDBFE',
-          300: '#93C5FD',
-          400: '#60A5FA',
-          500: '#3B82F6',
-          600: '#2563EB',
-          700: '#1D4ED8',
-          800: '#1E40AF',
-          900: '#1E3A8A',
+        info: {
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
         },
       },
       boxShadow: {
