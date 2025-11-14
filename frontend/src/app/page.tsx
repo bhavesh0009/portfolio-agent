@@ -53,9 +53,16 @@ export default function Home() {
     try {
       const response = await fetch(`/api/benchmarks/1?period=${period}`);
       const data = await response.json();
-      setBenchmarks(data);
+      // Only set benchmarks if the response has the expected structure
+      if (data && data.benchmarks) {
+        setBenchmarks(data);
+      } else {
+        console.warn('Invalid benchmark data received:', data);
+        setBenchmarks(null);
+      }
     } catch (err) {
       console.error('Failed to fetch benchmarks:', err);
+      setBenchmarks(null);
     }
   };
 
