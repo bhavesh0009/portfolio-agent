@@ -43,9 +43,18 @@ export default function Home() {
     try {
       const response = await fetch('/api/performance/1');
       const data = await response.json();
-      setPerformance(data);
+
+      // Check if the response has an error
+      if (data.error) {
+        console.warn('Performance API returned error:', data.error);
+        // Set null performance to avoid using stale data
+        setPerformance(null);
+      } else {
+        setPerformance(data);
+      }
     } catch (err) {
       console.error('Failed to fetch performance:', err);
+      setPerformance(null);
     }
   };
 
@@ -103,7 +112,8 @@ export default function Home() {
     if (!portfolio || !performance) return [];
 
     return portfolio.stocks.map((stock) => {
-      const stockPerf = performance.stock_details.find(
+      // Safely access stock_details with optional chaining
+      const stockPerf = performance.stock_details?.find(
         (perf) => perf.stock_id === stock.id
       );
 
