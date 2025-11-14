@@ -32,7 +32,7 @@ export default function BenchmarkComparison({ comparison, loading, onPeriodChang
     );
   }
 
-  if (!comparison || comparison.benchmarks.length === 0) {
+  if (!comparison || !comparison.benchmarks || comparison.benchmarks.length === 0) {
     return (
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Benchmark Comparison</h3>
