@@ -1,0 +1,67 @@
+# Environment variables
+.env
+.env.local
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual environment
+.venv/
+venv/
+
+# Logs
+logs/
+*.log
+
+# Cache directory
+.cache/
+
+# SQLite database backups
+*.db.sqlite_backup*
+*.db-*
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node modules (frontend)
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Playwright
+.playwright-mcp/
+
+# Temporary and test files
+temp_*.py
+check_*.py
+test_*.py
+*_temp.py
+
+# Screenshots and images
+*.jpg
+*.jpeg
+*.png
+Screenshot*
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+
+# Claude Code configuration
+.claude/
+
+# MCP configuration (project-specific)
+.mcp.json
+
+# Unusual files
+=*

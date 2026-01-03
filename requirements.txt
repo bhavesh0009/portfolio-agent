@@ -1,0 +1,54 @@
+# Web automation
+playwright==1.48.0
+
+# Environment variables
+python-dotenv==1.0.1
+
+# HTTP requests (alternative approach)
+requests==2.32.3
+urllib3>=2.0.0
+certifi>=2024.0.0
+charset-normalizer>=3.0.0
+idna>=3.0
+
+# HTML parsing (if needed for fallback)
+beautifulsoup4==4.12.3
+lxml==5.3.0
+soupsieve>=2.0
+
+# Data handling
+pandas==2.2.3
+yfinance>=0.2.40
+
+# Supabase PostgreSQL client
+supabase>=2.0.0
+
+# Async support
+nest-asyncio==1.6.0
+
+# AI/LLM integration
+google-genai>=0.3.0
+pydantic>=2.0.0
+
+# JSON repair for parsing
+json-repair>=0.25.0
+
+# News scraping
+GoogleNews==1.6.15
+dateparser>=1.2.0
+python-dateutil>=2.8.0
+pytz>=2024.0
+regex>=2024.0
+tzlocal>=5.0
+
+# Article extraction
+newspaper4k>=0.9.0
+trafilatura>=2.0.0
+lxml-html-clean>=0.4.0
+
+# Performance tracking and API
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+apscheduler>=3.10.0
+numpy>=1.24.0
+scipy>=1.10.0

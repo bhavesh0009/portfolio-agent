@@ -1,0 +1,183 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Typography */
+  --font-display: 'Playfair Display', serif;
+  --font-sans: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Dominant - Trust & Depth */
+  --color-navy-950: #0a1628;
+  --color-navy-900: #0f2744;
+  --color-navy-800: #1a3a5c;
+  --color-navy-700: #234d7b;
+  --color-navy-600: #2e5f9a;
+
+  /* Accent - Growth & Success */
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+
+  /* Accent - Alert & Risk */
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+  --color-rose-400: #fb7185;
+  --color-rose-500: #f43f5e;
+  --color-rose-600: #e11d48;
+
+  /* Accent - Premium */
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+
+  /* Neutrals - Sophistication */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+
+  /* Glass effects */
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: rgba(0, 0, 0, 0.1);
+}
+
+body {
+  color: var(--color-slate-50);
+  background:
+    /* Radial highlight - top left (emerald glow) */
+    radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+    /* Radial highlight - bottom right (gold glow) */
+    radial-gradient(circle at 80% 80%, rgba(251, 191, 36, 0.06) 0%, transparent 50%),
+    /* Base gradient - atmospheric depth */
+    linear-gradient(135deg, var(--color-navy-950) 0%, var(--color-slate-900) 100%);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  background-attachment: fixed;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      0 4px 6px var(--glass-shadow),
+      0 1px 3px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-card-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-card-hover:hover {
+    background: rgba(30, 41, 59, 0.7);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow:
+      0 12px 24px rgba(0, 0, 0, 0.2),
+      0 4px 8px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .metric-value {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Orchestrated fade-in animations with stagger */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+
+  .animate-delay-100 { animation-delay: 0.1s; }
+  .animate-delay-200 { animation-delay: 0.2s; }
+  .animate-delay-300 { animation-delay: 0.3s; }
+  .animate-delay-400 { animation-delay: 0.4s; }
+  .animate-delay-500 { animation-delay: 0.5s; }
+  .animate-delay-600 { animation-delay: 0.6s; }
+  .animate-delay-700 { animation-delay: 0.7s; }
+  .animate-delay-800 { animation-delay: 0.8s; }
+
+  /* Number counting animation */
+  .animate-count-up {
+    animation: countUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+}
+
+/* Keyframes for orchestrated animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-count-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

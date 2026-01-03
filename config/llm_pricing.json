@@ -1,0 +1,56 @@
+{
+  "gemini-3-pro": {
+    "input_cost_per_million": 2.00,
+    "output_cost_per_million": 12.00,
+    "tier": "high",
+    "notes": "Preview pricing. ≤200K tokens: $2/$12 per million. >200K tokens: $4/$18 per million. 1M token context window."
+  },
+  "gemini-3-flash": {
+    "input_cost_per_million": 0.50,
+    "output_cost_per_million": 3.00,
+    "tier": "mid",
+    "notes": "Preview pricing. Context caching available (90% savings). 50% discount with batch API."
+  },
+  "gemini-2.5-pro": {
+    "input_cost_per_million": 1.25,
+    "output_cost_per_million": 10.00,
+    "tier": "high",
+    "notes": "Standard pricing for prompts ≤200K tokens. >200K tokens: $2.50 input, $15 output. 50% discount with batch API."
+  },
+  "gemini-2.5-flash": {
+    "input_cost_per_million": 0.30,
+    "output_cost_per_million": 2.50,
+    "tier": "mid",
+    "notes": "Paid tier pricing. Audio input: $1.00/million. 50% discount with batch API."
+  },
+  "gemini-2.5-flash-lite": {
+    "input_cost_per_million": 0.10,
+    "output_cost_per_million": 0.40,
+    "tier": "low",
+    "notes": "Most cost-efficient model in 2.5 family. Stable and generally available."
+  },
+  "gemini-2.0-flash": {
+    "input_cost_per_million": 0.10,
+    "output_cost_per_million": 0.40,
+    "tier": "mid",
+    "notes": "Previous generation flash model."
+  },
+  "gemini-2.0-flash-lite": {
+    "input_cost_per_million": 0.10,
+    "output_cost_per_million": 0.40,
+    "tier": "low",
+    "notes": "Previous generation lite model."
+  },
+  "gemini-1.5-pro": {
+    "input_cost_per_million": 1.25,
+    "output_cost_per_million": 5.00,
+    "tier": "high",
+    "notes": "Legacy model. Consider upgrading to Gemini 2.5 Pro or 3 Pro."
+  },
+  "gemini-1.5-flash": {
+    "input_cost_per_million": 0.075,
+    "output_cost_per_million": 0.30,
+    "tier": "mid",
+    "notes": "Legacy model. Consider upgrading to Gemini 2.5 Flash or 3 Flash."
+  }
+}
