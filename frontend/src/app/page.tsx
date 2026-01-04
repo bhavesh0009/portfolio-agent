@@ -189,6 +189,9 @@ export default function Home() {
           <p className="text-slate-400 text-lg font-light">
             AI-Powered Portfolio Management
           </p>
+          <div className="mt-2 text-xs font-medium text-emerald-400/80 uppercase tracking-widest">
+            Inception • 27th December 2025
+          </div>
         </div>
 
         {/* Performance Metrics */}
