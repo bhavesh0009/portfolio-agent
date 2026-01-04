@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   webpack: (config) => {
     // Handle better-sqlite3 native module
     config.externals.push({

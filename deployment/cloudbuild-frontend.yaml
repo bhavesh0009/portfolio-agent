@@ -1,0 +1,7 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/portfolio-frontend', '--build-arg', 'NEXT_PUBLIC_API_URL=$_NEXT_PUBLIC_API_URL', '-f', 'frontend.Dockerfile', '.']
+substitutions:
+  _NEXT_PUBLIC_API_URL: ''
+images:
+  - 'gcr.io/$PROJECT_ID/portfolio-frontend'

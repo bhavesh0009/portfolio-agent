@@ -3,7 +3,7 @@ FastAPI Backend Service for Portfolio Dashboard
 Provides REST API endpoints for performance metrics, benchmarks, and manager updates
 """
 
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, HTTPException, Query, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from typing import Dict, List, Optional, Any
@@ -668,6 +668,47 @@ async def get_stock_price_history(
     except Exception as e:
         logger.error(f"Error fetching price history: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+# -----------------------------------------------------------------------------
+# Cloud Scheduler Endpoints
+# -----------------------------------------------------------------------------
+
+@app.post("/api/scheduler/daily-update")
+async def trigger_daily_update(background_tasks: BackgroundTasks):
+    """
+    Trigger daily price update (scheduled task)
+    """
+    from scheduler import daily_price_update
+    
+    logger.info("Received scheduler trigger for daily_price_update")
+    background_tasks.add_task(daily_price_update)
+    return {"status": "accepted", "message": "Daily price update started in background"}
+
+
+@app.post("/api/scheduler/portfolio-manager")
+async def trigger_portfolio_manager(background_tasks: BackgroundTasks):
+    """
+    Trigger portfolio manager analysis (scheduled task)
+    """
+    from scheduler import daily_portfolio_manager
+    
+    logger.info("Received scheduler trigger for daily_portfolio_manager")
+    background_tasks.add_task(daily_portfolio_manager)
+    return {"status": "accepted", "message": "Portfolio manager analysis started in background"}
+
+
+@app.post("/api/scheduler/cleanup")
+async def trigger_cleanup(background_tasks: BackgroundTasks):
+    """
+    Trigger weekly cleanup (scheduled task)
+    """
+    from scheduler import weekly_cache_cleanup
+    
+    logger.info("Received scheduler trigger for weekly_cache_cleanup")
+    background_tasks.add_task(weekly_cache_cleanup)
+    return {"status": "accepted", "message": "Weekly cleanup started in background"}
 
 
 if __name__ == '__main__':

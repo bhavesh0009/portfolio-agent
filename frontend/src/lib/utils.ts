@@ -65,3 +65,17 @@ export function getColorClass(value: number | undefined | null): string {
 export function cn(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(' ');
 }
+
+/**
+ * Format a date string or Date object
+ * @param date - The date to format
+ * @returns Formatted date string
+ */
+export function formatDate(date: string | Date | undefined | null): string {
+  if (!date) return '—';
+  return new Date(date).toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+}
