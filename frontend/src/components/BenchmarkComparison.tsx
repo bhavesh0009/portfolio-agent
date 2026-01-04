@@ -45,7 +45,7 @@ export default function BenchmarkComparison({ comparison, loading, onPeriodChang
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-100 rounded-lg w-64 mb-6"></div>
           <div className="h-80 bg-gray-50 rounded-xl"></div>
@@ -56,13 +56,13 @@ export default function BenchmarkComparison({ comparison, loading, onPeriodChang
 
   if (!comparison || !comparison.benchmarks || comparison.benchmarks.length === 0) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
-        <h3 className="text-2xl font-semibold text-slate-900 mb-4" style={{ fontFamily: 'DM Sans, sans-serif' }}>
-          Benchmark Comparison
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <h3 className="text-xl font-bold text-slate-900 mb-4 font-serif">
+          Benchmark Alpha
         </h3>
         <div className="flex flex-col items-center justify-center py-12">
-          <Target className="h-16 w-16 text-gray-300 mb-4" />
-          <p className="text-gray-500 text-center">
+          <Target className="h-16 w-16 text-slate-400 mb-4" />
+          <p className="text-slate-500 text-center text-sm">
             No benchmark data available. Run the portfolio manager to generate comparisons.
           </p>
         </div>
@@ -77,16 +77,15 @@ export default function BenchmarkComparison({ comparison, loading, onPeriodChang
 
   return (
     <div
-      className={`bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6 transition-all duration-700 ${
+      className={`bg-white rounded-2xl shadow-sm border border-slate-200 p-6 transition-all duration-700 ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
       }`}
-      style={{ fontFamily: 'DM Sans, sans-serif' }}
     >
       {/* Header with Period Selector */}
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h3 className="text-2xl font-semibold text-slate-900 mb-1">Benchmark Comparison</h3>
-          <p className="text-sm text-slate-500">Performance vs. market indices (since inception)</p>
+          <h3 className="text-xl font-bold text-slate-900 font-serif">Benchmark Alpha</h3>
+          <p className="text-sm text-slate-500 mt-1">Performance vs Market Indices</p>
         </div>
 
         <div className="flex gap-1.5 bg-gray-50 p-1.5 rounded-xl border border-gray-200">
@@ -110,28 +109,28 @@ export default function BenchmarkComparison({ comparison, loading, onPeriodChang
       </div>
 
       {/* Portfolio Return Summary */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-slate-50 to-blue-50/30 rounded-xl p-6 mb-8 border border-slate-200/50">
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-slate-50 to-blue-50/30 rounded-xl p-5 mb-6 border border-slate-200/50">
         <div className="flex items-center justify-between relative z-10">
           <div>
-            <p className="text-sm font-medium text-slate-600 mb-2 flex items-center gap-2">
-              <Target className="h-4 w-4" />
+            <p className="text-xs font-medium text-slate-600 mb-1.5 flex items-center gap-1.5">
+              <Target className="h-3.5 w-3.5" />
               Portfolio Return ({selectedPeriod})
             </p>
-            <p className={`text-4xl font-bold tracking-tight ${
+            <p className={`text-3xl font-bold tracking-tight ${
               comparison.portfolio_return >= 0 ? 'text-emerald-600' : 'text-rose-600'
             }`}>
               {formatPercent(comparison.portfolio_return)}
             </p>
           </div>
-          <div className={`p-4 rounded-2xl backdrop-blur-sm ${
+          <div className={`p-3 rounded-xl backdrop-blur-sm ${
             comparison.portfolio_return >= 0
               ? 'bg-emerald-100/80 border border-emerald-200/50'
               : 'bg-rose-100/80 border border-rose-200/50'
           }`}>
             {comparison.portfolio_return >= 0 ? (
-              <TrendingUp className="h-7 w-7 text-emerald-600" strokeWidth={2.5} />
+              <TrendingUp className="h-6 w-6 text-emerald-600" strokeWidth={2.5} />
             ) : (
-              <TrendingDown className="h-7 w-7 text-rose-600" strokeWidth={2.5} />
+              <TrendingDown className="h-6 w-6 text-rose-600" strokeWidth={2.5} />
             )}
           </div>
         </div>
@@ -144,16 +143,16 @@ export default function BenchmarkComparison({ comparison, loading, onPeriodChang
         <table className="w-full">
           <thead className="bg-slate-50 border-b-2 border-slate-200">
             <tr>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Index / Portfolio
               </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Return ({selectedPeriod})
               </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Alpha
               </th>
-              <th className="px-6 py-4 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Status
               </th>
             </tr>
@@ -161,19 +160,19 @@ export default function BenchmarkComparison({ comparison, loading, onPeriodChang
           <tbody className="bg-white divide-y divide-slate-100">
             {/* Portfolio Row */}
             <tr className="bg-blue-50/50 hover:bg-blue-50/70 transition-colors">
-              <td className="px-6 py-4 text-sm font-bold text-slate-900">
+              <td className="px-4 py-3 text-sm font-bold text-slate-900">
                 Your Portfolio
               </td>
-              <td className={`px-6 py-4 text-sm font-bold text-right ${
+              <td className={`px-4 py-3 text-sm font-bold text-right ${
                 comparison.portfolio_return >= 0 ? 'text-emerald-600' : 'text-rose-600'
               }`}>
                 {formatPercent(comparison.portfolio_return)}
               </td>
-              <td className="px-6 py-4 text-sm text-right text-slate-500 font-medium">
+              <td className="px-4 py-3 text-sm text-right text-slate-500 font-medium">
                 -
               </td>
-              <td className="px-6 py-4 text-sm text-center">
-                <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700 border border-blue-200">
+              <td className="px-4 py-3 text-sm text-center">
+                <span className="inline-flex px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700 border border-blue-200">
                   Active
                 </span>
               </td>
@@ -182,26 +181,26 @@ export default function BenchmarkComparison({ comparison, loading, onPeriodChang
             {/* Benchmark Rows */}
             {filteredBenchmarks.map((benchmark) => (
               <tr key={benchmark.index_symbol} className="hover:bg-slate-50 transition-colors">
-                <td className="px-6 py-4 text-sm font-semibold text-slate-800">
+                <td className="px-4 py-3 text-sm font-semibold text-slate-800">
                   {benchmark.index_name}
                 </td>
-                <td className={`px-6 py-4 text-sm font-semibold text-right ${
+                <td className={`px-4 py-3 text-sm font-semibold text-right ${
                   benchmark.index_return >= 0 ? 'text-emerald-600' : 'text-rose-600'
                 }`}>
                   {formatPercent(benchmark.index_return)}
                 </td>
-                <td className={`px-6 py-4 text-sm font-bold text-right ${
+                <td className={`px-4 py-3 text-sm font-bold text-right font-mono ${
                   benchmark.alpha >= 0 ? 'text-emerald-600' : 'text-rose-600'
                 }`}>
                   {formatPercent(benchmark.alpha)}
                 </td>
-                <td className="px-6 py-4 text-sm text-center">
+                <td className="px-4 py-3 text-sm text-center">
                   {benchmark.alpha >= 0 ? (
-                    <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
+                    <span className="inline-flex px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
                       Outperforming
                     </span>
                   ) : (
-                    <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-rose-100 text-rose-700 border border-rose-200">
+                    <span className="inline-flex px-2.5 py-0.5 text-xs font-semibold rounded-full bg-rose-100 text-rose-700 border border-rose-200">
                       Underperforming
                     </span>
                   )}

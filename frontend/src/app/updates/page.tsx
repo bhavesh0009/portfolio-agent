@@ -71,35 +71,43 @@ export default function UpdatesTimelinePage() {
   }, {} as Record<string, ManagerUpdate[]>);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen text-slate-50 selection:bg-emerald-500/30">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-900/20 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-900/10 rounded-full blur-[100px] pointer-events-none" />
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/"
-            className="text-sm text-blue-600 hover:text-blue-700 mb-2 inline-block"
+            className="text-sm text-emerald-400 hover:text-emerald-300 mb-2 inline-flex items-center gap-1 transition-colors"
           >
             ← Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Portfolio Manager Updates</h1>
-          <p className="text-gray-600">
+          <h1 className="text-4xl md:text-5xl font-bold font-serif text-transparent bg-clip-text bg-gradient-to-r from-slate-50 to-slate-400 mb-2">
+            Portfolio Manager Updates
+          </h1>
+          <p className="text-slate-400 text-lg font-light">
             Complete history of AI-powered portfolio analysis and recommendations
           </p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 mb-6">
+        <div className="bg-[#0f172a]/60 backdrop-blur-md border border-slate-800 rounded-xl shadow-sm p-4 mb-6">
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-gray-500" />
-              <span className="text-sm font-medium text-gray-700">Filters:</span>
+              <Filter className="h-5 w-5 text-slate-400" />
+              <span className="text-sm font-medium text-slate-300">Filters:</span>
             </div>
 
             {/* Status Filter */}
             <select
               value={filterStatus || ''}
               onChange={(e) => setFilterStatus(e.target.value || null)}
-              className="px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 bg-[#1e293b] border border-slate-700 text-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               <option value="">All Status</option>
               <option value="PENDING">Pending</option>
@@ -111,7 +119,7 @@ export default function UpdatesTimelinePage() {
             <select
               value={filterPriority || ''}
               onChange={(e) => setFilterPriority(e.target.value || null)}
-              className="px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 bg-[#1e293b] border border-slate-700 text-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               <option value="">All Priority</option>
               <option value="CRITICAL">Critical</option>
@@ -126,7 +134,7 @@ export default function UpdatesTimelinePage() {
                   setFilterStatus(null);
                   setFilterPriority(null);
                 }}
-                className="text-sm text-blue-600 hover:text-blue-700"
+                className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
               >
                 Clear Filters
               </button>
@@ -139,19 +147,19 @@ export default function UpdatesTimelinePage() {
           <div className="space-y-6">
             {[1, 2, 3].map((i) => (
               <div key={i} className="animate-pulse">
-                <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
-                <div className="bg-white border border-gray-200 rounded-lg p-6">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-6 bg-slate-700 rounded w-48 mb-4"></div>
+                <div className="bg-[#0f172a]/60 backdrop-blur-md border border-slate-800 rounded-xl p-6">
+                  <div className="h-4 bg-slate-700 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-slate-700 rounded w-1/2"></div>
                 </div>
               </div>
             ))}
           </div>
         ) : Object.keys(groupedUpdates).length === 0 ? (
-          <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
-            <Activity className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No updates found</h3>
-            <p className="text-gray-500">
+          <div className="bg-[#0f172a]/60 backdrop-blur-md border border-slate-800 rounded-xl p-12 text-center">
+            <Activity className="h-16 w-16 text-emerald-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-slate-50 mb-2">No updates found</h3>
+            <p className="text-slate-400">
               {filterStatus || filterPriority
                 ? 'Try adjusting your filters'
                 : 'Portfolio manager updates will appear here after the next scheduled run'}
@@ -163,11 +171,11 @@ export default function UpdatesTimelinePage() {
               <div key={date}>
                 {/* Date Header */}
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-1 h-px bg-gray-300"></div>
-                  <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                  <div className="flex-1 h-px bg-slate-700"></div>
+                  <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">
                     {date}
                   </h2>
-                  <div className="flex-1 h-px bg-gray-300"></div>
+                  <div className="flex-1 h-px bg-slate-700"></div>
                 </div>
 
                 {/* Updates for this date */}
@@ -195,26 +203,25 @@ function TimelineUpdateCard({ update }: TimelineUpdateCardProps) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'CRITICAL':
-        return 'border-red-300';
       case 'HIGH':
-        return 'border-orange-300';
+        return 'border-amber-400';
       case 'MEDIUM':
-        return 'border-yellow-300';
+        return 'border-blue-400';
       default:
-        return 'border-blue-300';
+        return 'border-slate-600';
     }
   };
 
   const getRecommendationIcon = (recommendation: string | null) => {
     switch (recommendation) {
       case 'BUY_MORE':
-        return <TrendingUp className="h-4 w-4 text-green-600" />;
+        return <TrendingUp className="h-4 w-4 text-emerald-400" />;
       case 'SELL':
-        return <AlertCircle className="h-4 w-4 text-red-600" />;
+        return <AlertCircle className="h-4 w-4 text-rose-400" />;
       case 'REBALANCE':
-        return <Activity className="h-4 w-4 text-blue-600" />;
+        return <Activity className="h-4 w-4 text-blue-400" />;
       case 'HOLD':
-        return <Shield className="h-4 w-4 text-gray-600" />;
+        return <Shield className="h-4 w-4 text-slate-400" />;
       default:
         return null;
     }
@@ -249,27 +256,27 @@ function TimelineUpdateCard({ update }: TimelineUpdateCardProps) {
   };
 
   return (
-    <div className={`bg-white border-l-4 ${getPriorityColor(update.priority)} rounded-lg shadow-sm hover:shadow-md transition-shadow`}>
+    <div className={`bg-[#0f172a]/60 backdrop-blur-md border-l-4 ${getPriorityColor(update.priority)} rounded-lg shadow-md hover:shadow-xl transition-all`}>
       <div className="p-4">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <Clock className="h-4 w-4 text-gray-400" />
-              <span className="text-xs text-gray-500">{formatTime(update.created_at)}</span>
+              <Clock className="h-4 w-4 text-slate-400" />
+              <span className="text-xs text-slate-400">{formatTime(update.created_at)}</span>
               {update.priority === 'CRITICAL' && (
-                <span className="px-2 py-0.5 bg-red-600 text-white text-xs font-bold rounded-full">
+                <span className="px-2 py-0.5 bg-rose-600 text-white text-xs font-bold rounded-full">
                   URGENT
                 </span>
               )}
             </div>
-            <h3 className="text-base font-semibold text-gray-900">{update.title}</h3>
+            <h3 className="text-base font-semibold text-slate-50">{update.title}</h3>
           </div>
 
           {update.recommendation && (
-            <div className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-md">
+            <div className="flex items-center gap-1 px-2 py-1 bg-slate-800/50 border border-slate-700 rounded-md">
               {getRecommendationIcon(update.recommendation)}
-              <span className="text-xs font-medium text-gray-700">
+              <span className="text-xs font-medium text-slate-300">
                 {update.recommendation.replace('_', ' ')}
               </span>
             </div>
@@ -277,7 +284,7 @@ function TimelineUpdateCard({ update }: TimelineUpdateCardProps) {
         </div>
 
         {/* Description */}
-        <p className="text-sm text-gray-700 mb-3">{parseDescription(update.description)}</p>
+        <p className="text-sm text-slate-300 mb-3">{parseDescription(update.description)}</p>
 
         {/* Affected Stocks */}
         {update.affected_stocks && update.affected_stocks.length > 0 && (
@@ -285,7 +292,7 @@ function TimelineUpdateCard({ update }: TimelineUpdateCardProps) {
             {update.affected_stocks.map((stock) => (
               <span
                 key={stock}
-                className="px-2 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-medium text-gray-700"
+                className="px-2 py-0.5 bg-slate-800 border border-slate-700 text-emerald-400 font-mono rounded text-xs font-medium"
               >
                 {stock}
               </span>
@@ -298,15 +305,15 @@ function TimelineUpdateCard({ update }: TimelineUpdateCardProps) {
           <div className="mb-3">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium"
+              className="flex items-center gap-1 text-xs text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
             >
               <span>{isExpanded ? 'Hide' : 'Show'} Analysis</span>
               <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
             </button>
 
             {isExpanded && (
-              <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-md">
-                <p className="text-sm text-gray-700">{update.reasoning}</p>
+              <div className="mt-2 p-3 bg-slate-800/50 border border-slate-700 rounded-md">
+                <p className="text-sm text-slate-300">{update.reasoning}</p>
               </div>
             )}
           </div>
@@ -314,14 +321,14 @@ function TimelineUpdateCard({ update }: TimelineUpdateCardProps) {
 
         {/* Footer */}
         <div className="flex items-center gap-2 text-xs">
-          <span className={`px-2 py-1 rounded ${
-            update.status === 'EXECUTED' ? 'bg-green-100 text-green-700' :
-            update.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
-            'bg-gray-100 text-gray-700'
+          <span className={`px-2 py-1 rounded border ${
+            update.status === 'EXECUTED' ? 'bg-emerald-900/30 text-emerald-400 border-emerald-700' :
+            update.status === 'PENDING' ? 'bg-amber-900/30 text-amber-400 border-amber-700' :
+            'bg-slate-800 text-slate-400 border-slate-700'
           }`}>
             {update.status}
           </span>
-          <span className="text-gray-500">Priority: <span className="font-medium">{update.priority}</span></span>
+          <span className="text-slate-500">Priority: <span className="font-medium text-slate-300">{update.priority}</span></span>
         </div>
       </div>
     </div>

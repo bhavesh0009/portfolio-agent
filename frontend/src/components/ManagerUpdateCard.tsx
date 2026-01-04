@@ -12,7 +12,7 @@ interface ManagerUpdateCardProps {
 export default function ManagerUpdateCard({ update, loading }: ManagerUpdateCardProps) {
   if (loading) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
           <div className="space-y-3">
@@ -26,31 +26,56 @@ export default function ManagerUpdateCard({ update, loading }: ManagerUpdateCard
 
   if (!update) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Today's Analysis</h3>
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+        <h3 className="text-lg font-bold text-slate-900 mb-4">Today's Analysis</h3>
         <div className="text-center py-8">
-          <Activity className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 text-sm">
+          <Activity className="h-12 w-12 text-slate-400 mx-auto mb-3" />
+          <p className="text-slate-500 text-sm">
             No manager updates available yet.
           </p>
-          <p className="text-gray-400 text-xs mt-1">
+          <p className="text-slate-400 text-xs mt-1">
             The portfolio manager will analyze your holdings during the next scheduled run.
           </p>
+        </div>
+
+        {/* View All Updates Link */}
+        <div className="mt-4 pt-4 border-t border-slate-200 text-center">
+          <Link
+            href="/updates"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors group"
+          >
+            <span>View all updates</span>
+            <svg
+              className="w-4 h-4 transition-transform group-hover:translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
       </div>
     );
   }
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityBorderColor = (priority: string) => {
     switch (priority) {
       case 'CRITICAL':
-        return 'border-red-300 bg-red-50';
       case 'HIGH':
-        return 'border-orange-300 bg-orange-50';
-      case 'MEDIUM':
-        return 'border-yellow-300 bg-yellow-50';
+        return 'border-amber-400';
       default:
-        return 'border-blue-300 bg-blue-50';
+        return 'border-blue-400';
+    }
+  };
+
+  const getPriorityIconColor = (priority: string) => {
+    switch (priority) {
+      case 'CRITICAL':
+      case 'HIGH':
+        return 'bg-amber-100 text-amber-600';
+      default:
+        return 'bg-blue-100 text-blue-600';
     }
   };
 
@@ -106,86 +131,89 @@ export default function ManagerUpdateCard({ update, loading }: ManagerUpdateCard
   };
 
   return (
-    <div className={`border-2 rounded-lg shadow-md p-6 mb-6 ${getPriorityColor(update.priority)}`}>
+    <div className={`bg-white rounded-2xl border-l-4 shadow-md p-6 ${getPriorityBorderColor(update.priority)}`}>
       {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-lg font-bold text-gray-900">{update.title}</h3>
-            {update.priority === 'CRITICAL' && (
-              <span className="px-2 py-0.5 bg-red-600 text-white text-xs font-bold rounded-full animate-pulse">
-                URGENT
-              </span>
-            )}
+      <div className="flex justify-between items-start mb-4">
+        <div className="flex items-center gap-3">
+          <div className={`p-2 rounded-full ${getPriorityIconColor(update.priority)}`}>
+            <AlertCircle size={20} />
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Clock className="h-4 w-4" />
-            <span>{formatDate(update.update_date || update.created_at)}</span>
-            <span className="text-gray-400">•</span>
-            <span className="capitalize">{update.update_type.replace('_', ' ').toLowerCase()}</span>
+          <div>
+            <h3 className="font-bold text-slate-900 text-lg">{update.title}</h3>
+            <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+              <Clock size={12} />
+              <span>{formatDate(update.update_date || update.created_at)}</span>
+            </div>
           </div>
         </div>
-
-        {update.recommendation && (
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${getRecommendationColor(update.recommendation)}`}>
-            {getRecommendationIcon(update.recommendation)}
-            <span className="text-sm font-semibold">
-              {update.recommendation.replace('_', ' ')}
-            </span>
-          </div>
-        )}
       </div>
 
+      {/* Recommendation Badge */}
+      {update.recommendation && (
+        <div className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-5 ${
+          update.recommendation === 'REBALANCE' ? 'bg-blue-50 text-blue-900 border border-blue-100' :
+          update.recommendation === 'BUY_MORE' ? 'bg-emerald-50 text-emerald-900 border border-emerald-100' :
+          update.recommendation === 'SELL' ? 'bg-rose-50 text-rose-900 border border-rose-100' :
+          'bg-slate-50 text-slate-900 border border-slate-100'
+        }`}>
+          <div className={`p-1.5 rounded-full ${
+            update.recommendation === 'REBALANCE' ? 'bg-blue-200 text-blue-700' :
+            update.recommendation === 'BUY_MORE' ? 'bg-emerald-200 text-emerald-700' :
+            update.recommendation === 'SELL' ? 'bg-rose-200 text-rose-700' :
+            'bg-slate-200 text-slate-700'
+          }`}>
+            {getRecommendationIcon(update.recommendation)}
+          </div>
+          <div>
+            <span className="text-xs font-bold uppercase opacity-60 block mb-0.5">Recommendation</span>
+            <span className="text-sm font-bold tracking-wide">{update.recommendation.replace('_', ' ')}</span>
+          </div>
+        </div>
+      )}
+
       {/* Description */}
-      <p className="text-gray-700 mb-4 leading-relaxed">
+      <p className="text-slate-600 leading-relaxed mb-4 text-sm">
         {parseDescription(update.description)}
       </p>
 
-      {/* Affected Stocks */}
-      {update.affected_stocks && update.affected_stocks.length > 0 && (
-        <div className="mb-4">
-          <p className="text-xs font-medium text-gray-600 mb-2">Affected Stocks:</p>
-          <div className="flex flex-wrap gap-2">
-            {update.affected_stocks.map((stock) => (
-              <span
-                key={stock}
-                className="px-2 py-1 bg-white border border-gray-300 rounded-md text-xs font-medium text-gray-700"
-              >
-                {stock}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Reasoning */}
       {update.reasoning && (
-        <div className="bg-white/50 border border-gray-300 rounded-lg p-3 mb-4">
-          <p className="text-xs font-medium text-gray-600 mb-1">Analysis:</p>
-          <p className="text-sm text-gray-700">{update.reasoning}</p>
+        <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 mb-4">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Analysis</p>
+          <p className="text-sm text-slate-700 italic">"{update.reasoning}"</p>
         </div>
       )}
 
-      {/* Footer */}
-      <div className="flex items-center justify-between pt-4 border-t border-gray-300">
-        <div className="flex items-center gap-2">
-          <span className={`px-2 py-1 rounded-md text-xs font-medium ${
-            update.status === 'EXECUTED' ? 'bg-green-100 text-green-700' :
-            update.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
-            'bg-gray-100 text-gray-700'
-          }`}>
-            {update.status}
-          </span>
-          <span className="text-xs text-gray-500">
-            Priority: <span className="font-medium">{update.priority}</span>
-          </span>
+      {/* Affected Stocks */}
+      {update.affected_stocks && update.affected_stocks.length > 0 && (
+        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-100">
+          <span className="text-xs text-slate-400 font-medium">Affected:</span>
+          {update.affected_stocks.map((ticker) => (
+            <span
+              key={ticker}
+              className="px-2 py-1 bg-white border border-slate-200 rounded text-xs font-semibold text-slate-600 shadow-sm"
+            >
+              {ticker}
+            </span>
+          ))}
         </div>
+      )}
 
+      {/* View All Updates Link */}
+      <div className="mt-5 pt-4 border-t border-slate-200">
         <Link
           href="/updates"
-          className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors group"
         >
-          View All Updates →
+          <span>View all updates</span>
+          <svg
+            className="w-4 h-4 transition-transform group-hover:translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </Link>
       </div>
     </div>

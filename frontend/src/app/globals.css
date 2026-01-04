@@ -5,7 +5,7 @@
 :root {
   /* Typography */
   --font-display: 'Playfair Display', serif;
-  --font-sans: 'IBM Plex Sans', sans-serif;
+  --font-sans: 'DM Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Dominant - Trust & Depth */
@@ -52,16 +52,9 @@
 
 body {
   color: var(--color-slate-50);
-  background:
-    /* Radial highlight - top left (emerald glow) */
-    radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
-    /* Radial highlight - bottom right (gold glow) */
-    radial-gradient(circle at 80% 80%, rgba(251, 191, 36, 0.06) 0%, transparent 50%),
-    /* Base gradient - atmospheric depth */
-    linear-gradient(135deg, var(--color-navy-950) 0%, var(--color-slate-900) 100%);
+  background: #0a1628;
   font-family: var(--font-sans);
   min-height: 100vh;
-  background-attachment: fixed;
 }
 
 @layer base {
@@ -99,12 +92,18 @@ body {
 
   .metric-value {
     font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums slashed-zero;
+    font-feature-settings: "tnum", "zero";
   }
 }
 
 @layer utilities {
+  /* Enable slashed zero for all monospace text */
+  .font-mono {
+    font-variant-numeric: slashed-zero;
+    font-feature-settings: "zero";
+  }
+
   .text-balance {
     text-wrap: balance;
   }

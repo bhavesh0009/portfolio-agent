@@ -50,9 +50,14 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         accessorKey: 'name',
         header: 'STOCK',
         cell: ({ row }) => (
-          <div>
-            <div className="font-semibold text-slate-100">{row.original.name}</div>
-            <div className="text-sm text-slate-400 font-mono">{row.original.ticker}</div>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center font-bold text-slate-300 border border-slate-700 group-hover:border-emerald-500/50 transition-colors">
+              {row.original.ticker?.[0] || 'S'}
+            </div>
+            <div>
+              <div className="font-bold text-slate-200">{row.original.name}</div>
+              <div className="text-xs text-emerald-500 font-mono">{row.original.ticker}</div>
+            </div>
           </div>
         ),
         size: 200,
@@ -61,7 +66,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         accessorKey: 'entry_price',
         header: 'ENTRY',
         cell: ({ row }) => (
-          <span className="font-mono metric-value text-slate-200">
+          <span className="font-mono metric-value tabular-nums font-bold text-slate-200">
             {formatCurrency(row.original.entry_price)}
           </span>
         ),
@@ -71,7 +76,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         accessorKey: 'currentPrice',
         header: 'CURRENT',
         cell: ({ row }) => (
-          <span className="font-mono metric-value text-slate-200">
+          <span className="font-mono metric-value tabular-nums font-bold text-slate-200">
             {row.original.currentPrice
               ? formatCurrency(row.original.currentPrice)
               : '-'}
@@ -85,7 +90,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         cell: ({ row }) => {
           const pnl = row.original.pnlAbsolute || 0;
           return (
-            <span className={`font-mono metric-value font-semibold ${
+            <span className={`font-mono metric-value tabular-nums font-bold ${
               pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'
             }`}>
               {formatCurrency(pnl, true)}
@@ -100,7 +105,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         cell: ({ row }) => {
           const pnlPct = row.original.pnlPct || 0;
           return (
-            <span className={`font-mono metric-value font-semibold ${
+            <span className={`font-mono metric-value tabular-nums font-bold ${
               pnlPct >= 0 ? 'text-emerald-400' : 'text-rose-400'
             }`}>
               {formatPercent(pnlPct)}
@@ -116,7 +121,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
           const shares = row.original.shares;
           if (shares !== undefined && shares !== null) {
             return (
-              <div className="font-mono metric-value text-primary-400 font-medium">
+              <div className="font-mono metric-value tabular-nums font-bold text-primary-400">
                 {shares.toLocaleString()}
               </div>
             );
@@ -130,10 +135,10 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         header: 'ALLOCATION',
         cell: ({ row }) => (
           <div>
-            <div className="font-mono metric-value text-slate-200">
+            <div className="font-mono metric-value tabular-nums font-bold text-slate-200">
               {formatCurrency(row.original.allocation_amount)}
             </div>
-            <div className="text-sm text-slate-500 font-mono">
+            <div className="text-sm text-slate-500 font-mono tabular-nums">
               {row.original.allocation_pct.toFixed(1)}%
             </div>
           </div>
@@ -144,7 +149,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         accessorKey: 'stop_loss_price',
         header: 'STOP LOSS',
         cell: ({ row }) => (
-          <span className="font-mono metric-value text-rose-400 font-medium">
+          <span className="font-mono metric-value tabular-nums font-medium text-rose-400">
             {formatCurrency(row.original.stop_loss_price)}
           </span>
         ),
@@ -154,7 +159,7 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         accessorKey: 'target_price',
         header: 'TARGET',
         cell: ({ row }) => (
-          <span className="font-mono metric-value text-emerald-400 font-medium">
+          <span className="font-mono metric-value tabular-nums font-medium text-emerald-400">
             {formatCurrency(row.original.target_price)}
           </span>
         ),
@@ -214,18 +219,18 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
       </div>
 
       {/* Table */}
-      <div className="glass-card rounded-lg overflow-hidden">
+      <div className="bg-[#0a1628]/80 backdrop-blur-xl border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full">
             {/* Table Header */}
-            <thead className="bg-slate-900/50 border-b-2 border-slate-800">
+            <thead className="bg-[#0f172a] border-b border-slate-800">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   <th className="w-12 px-4 py-3"></th>
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="px-4 py-3 text-left text-caption uppercase text-slate-400 font-semibold cursor-pointer hover:bg-slate-800/50 transition-colors tracking-wider"
+                      className="px-6 py-4 text-left text-xs uppercase text-slate-400 font-bold cursor-pointer hover:text-slate-200 transition-colors tracking-wider"
                       style={{ width: header.column.getSize() }}
                       onClick={header.column.getToggleSortingHandler()}
                     >
@@ -262,22 +267,22 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
                 table.getRowModel().rows.map((row) => (
                   <React.Fragment key={row.id}>
                     {/* Main Row */}
-                    <tr className="border-b border-slate-800 hover:bg-slate-800/30 transition-colors">
-                      <td className="px-4 py-3">
+                    <tr className="border-b border-slate-800 hover:bg-slate-800/40 transition-colors cursor-pointer group">
+                      <td className="px-6 py-4">
                         <button
                           onClick={() => toggleRowExpanded(row.original.id)}
                           className="p-1 hover:bg-slate-700/50 rounded transition-colors"
                         >
                           <ChevronRight
                             size={16}
-                            className={`text-slate-400 transition-transform ${
+                            className={`text-slate-600 group-hover:text-emerald-400 transition-all ${
                               expandedRows[row.original.id] ? 'rotate-90' : ''
                             }`}
                           />
                         </button>
                       </td>
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-4 py-3 text-sm">
+                        <td key={cell.id} className="px-6 py-4 text-sm">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}

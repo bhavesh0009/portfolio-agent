@@ -173,11 +173,17 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <main className="min-h-screen text-slate-50 selection:bg-emerald-500/30">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-900/20 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-900/10 rounded-full blur-[100px] pointer-events-none" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Page Header with orchestrated animation */}
         <div className="animate-fade-in-up">
-          <h1 className="text-display-lg font-display font-black text-slate-50 mb-2 tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-bold font-serif text-transparent bg-clip-text bg-gradient-to-r from-slate-50 to-slate-400 mb-2">
             Portfolio Dashboard
           </h1>
           <p className="text-slate-400 text-lg font-light">
@@ -190,9 +196,10 @@ export default function Home() {
           <PerformanceMetrics performance={performance} loading={!performance} />
         </div>
 
-        {/* Portfolio Value Chart */}
-        {performance && (
-          <div className="animate-fade-in-up animate-delay-200">
+        {/* Main Content - Full Width Stack */}
+        <div className="space-y-8 animate-fade-in-up animate-delay-200">
+          {/* Portfolio Value Chart - Full Width */}
+          {performance && (
             <PortfolioValueChart
               initialCapital={portfolio?.total_capital || 0}
               currentValue={performance.current_value}
@@ -203,11 +210,9 @@ export default function Home() {
               historyData={portfolioHistory}
               loading={!performance}
             />
-          </div>
-        )}
+          )}
 
-        {/* Benchmark Comparison */}
-        <div className="animate-fade-in-up animate-delay-300">
+          {/* Benchmark Alpha - Full Width */}
           <BenchmarkComparison
             comparison={benchmarks}
             loading={!benchmarks}
@@ -216,10 +221,8 @@ export default function Home() {
             }}
             portfolioCreatedAt={portfolio?.created_at}
           />
-        </div>
 
-        {/* Latest Manager Update */}
-        <div className="animate-fade-in-up animate-delay-400">
+          {/* Daily Portfolio Review - Full Width */}
           <ManagerUpdateCard update={latestUpdate} loading={!latestUpdate} />
         </div>
 

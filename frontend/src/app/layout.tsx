@@ -9,17 +9,17 @@ const playfair = Playfair_Display({
   display: 'swap',
 });
 
-const ibmPlex = IBM_Plex_Sans({
+const dmSans = DM_Sans({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-sans',
   display: 'swap',
 });
 
-const dmSans = DM_Sans({
+const ibmPlex = IBM_Plex_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-dm-sans',
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-ibm-plex',
   display: 'swap',
 });
 
@@ -42,7 +42,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${ibmPlex.variable} ${playfair.variable} ${dmSans.variable} ${jetbrains.variable} font-sans`}>{children}</body>
+      <body className={`${dmSans.variable} ${playfair.variable} ${jetbrains.variable} font-sans`}>{children}</body>
     </html>
   );
 }

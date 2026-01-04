@@ -1,7 +1,7 @@
 'use client';
 
 import { PortfolioPerformance } from '@/types';
-import { TrendingUp, TrendingDown, DollarSign, Activity, Shield, BarChart3, Wallet } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Activity, Shield, BarChart3, Wallet, ArrowUpRight, ArrowDownRight, TrendingDown as Volatility, AlertTriangle } from 'lucide-react';
 
 interface PerformanceMetricsProps {
   performance: PortfolioPerformance | null;
@@ -11,26 +11,21 @@ interface PerformanceMetricsProps {
 export default function PerformanceMetrics({ performance, loading }: PerformanceMetricsProps) {
   if (loading) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-48 mb-4"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-24"></div>
-                <div className="h-10 bg-gray-200 rounded w-full"></div>
-              </div>
-            ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          <div key={i} className="bg-[#0f172a]/60 backdrop-blur-md border border-slate-800 rounded-xl p-5 animate-pulse">
+            <div className="h-4 bg-slate-700 rounded w-24 mb-4"></div>
+            <div className="h-8 bg-slate-700 rounded w-full"></div>
           </div>
-        </div>
+        ))}
       </div>
     );
   }
 
   if (!performance) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
-        <p className="text-gray-500 text-center">No performance data available</p>
+      <div className="bg-[#0f172a]/60 backdrop-blur-md border border-slate-800 rounded-xl p-8 text-center">
+        <p className="text-slate-400">No performance data available</p>
       </div>
     );
   }
@@ -60,86 +55,81 @@ export default function PerformanceMetrics({ performance, loading }: Performance
   };
 
   return (
-    <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-lg shadow-md p-6 mb-6">
-      {/* Header */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Portfolio Performance</h2>
-        <p className="text-sm text-gray-500 mt-1">
-          Last updated: {performance.calculated_at ? new Date(performance.calculated_at).toLocaleString('en-IN') : 'Not available'}
-        </p>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Row 1 - Card 1: Current Value */}
+      <MetricCard
+        title="Current Value"
+        value={formatCurrency(performance.current_value)}
+        icon={<DollarSign className="h-5 w-5" />}
+        iconColor="bg-blue-100 text-blue-600"
+      />
 
-      {/* Main Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        {/* Current Value */}
-        <MetricCard
-          title="Current Value"
-          value={formatCurrency(performance.current_value)}
-          icon={<DollarSign className="h-5 w-5" />}
-          iconColor="bg-blue-100 text-blue-600"
-        />
+      {/* Row 1 - Card 2: Total P&L */}
+      <MetricCard
+        title="Total P&L"
+        value={formatCurrency(performance.pnl_absolute)}
+        subtitle={formatPercent(performance.pnl_pct)}
+        icon={isPositive(performance.pnl_pct) ? <TrendingUp className="h-5 w-5" /> : <TrendingDown className="h-5 w-5" />}
+        iconColor={isPositive(performance.pnl_pct) ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}
+        trend={isPositive(performance.pnl_pct) ? 'positive' : 'negative'}
+      />
 
-        {/* Total P&L */}
-        <MetricCard
-          title="Total P&L"
-          value={formatCurrency(performance.pnl_absolute)}
-          subtitle={formatPercent(performance.pnl_pct)}
-          icon={isPositive(performance.pnl_pct) ? <TrendingUp className="h-5 w-5" /> : <TrendingDown className="h-5 w-5" />}
-          iconColor={isPositive(performance.pnl_pct) ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}
-          trend={isPositive(performance.pnl_pct) ? 'positive' : 'negative'}
-        />
+      {/* Row 1 - Card 3: Day Return */}
+      <MetricCard
+        title="Day Return"
+        value={formatCurrency(performance.day_return_absolute)}
+        subtitle={formatPercent(performance.day_return_pct)}
+        icon={<Activity className="h-5 w-5" />}
+        iconColor={isPositive(performance.day_return_pct) ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}
+        trend={isPositive(performance.day_return_pct) ? 'positive' : 'negative'}
+      />
 
-        {/* Day Return */}
-        <MetricCard
-          title="Day Return"
-          value={formatCurrency(performance.day_return_absolute)}
-          subtitle={formatPercent(performance.day_return_pct)}
-          icon={<Activity className="h-5 w-5" />}
-          iconColor={isPositive(performance.day_return_pct) ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}
-          trend={isPositive(performance.day_return_pct) ? 'positive' : 'negative'}
-        />
+      {/* Row 1 - Card 4: Sharpe Ratio */}
+      <MetricCard
+        title="Sharpe Ratio"
+        value={performance.sharpe_ratio !== null && performance.sharpe_ratio !== undefined ? performance.sharpe_ratio.toFixed(2) : 'N/A'}
+        subtitle="Risk-adjusted return"
+        icon={<Shield className="h-5 w-5" />}
+        iconColor="bg-purple-100 text-purple-600"
+      />
 
-        {/* Sharpe Ratio */}
-        <MetricCard
-          title="Sharpe Ratio"
-          value={performance.sharpe_ratio !== null && performance.sharpe_ratio !== undefined ? performance.sharpe_ratio.toFixed(2) : 'N/A'}
-          subtitle="Risk-adjusted return"
-          icon={<Shield className="h-5 w-5" />}
-          iconColor="bg-purple-100 text-purple-600"
-        />
+      {/* Row 2 - Card 5: Volatility */}
+      <MetricCard
+        title="Volatility"
+        value={formatPercent(performance.volatility)}
+        subtitle="Annualized Std. Dev."
+        icon={<BarChart3 className="h-5 w-5" />}
+        iconColor="bg-slate-100 text-slate-600"
+      />
 
-        {/* Cash Balance */}
-        <MetricCard
-          title="Cash Balance"
-          value={formatCurrency(performance.cash_balance ?? 0)}
-          subtitle={`${((performance.cash_balance ?? 0) / performance.current_value * 100).toFixed(1)}% of portfolio`}
-          icon={<Wallet className="h-5 w-5" />}
-          iconColor="bg-amber-100 text-amber-600"
-        />
-      </div>
+      {/* Row 2 - Card 6: Max Drawdown */}
+      <MetricCard
+        title="Max Drawdown"
+        value={performance.max_drawdown !== null && performance.max_drawdown !== undefined && !isNaN(performance.max_drawdown)
+          ? `-${performance.max_drawdown.toFixed(2)}%`
+          : 'N/A'}
+        subtitle="Peak to Trough"
+        icon={<AlertTriangle className="h-5 w-5" />}
+        iconColor="bg-orange-100 text-orange-600"
+      />
 
-      {/* Risk Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <RiskMetricCard
-          title="Volatility"
-          value={formatPercent(performance.volatility)}
-          description="Annualized standard deviation"
-        />
+      {/* Row 2 - Card 7: Holdings */}
+      <MetricCard
+        title="Holdings"
+        value={`${performance.num_stocks} stocks`}
+        subtitle={`Capital: ${formatCurrency(performance.initial_capital)}`}
+        icon={<BarChart3 className="h-5 w-5" />}
+        iconColor="bg-indigo-100 text-indigo-600"
+      />
 
-        <RiskMetricCard
-          title="Max Drawdown"
-          value={performance.max_drawdown !== null && performance.max_drawdown !== undefined && !isNaN(performance.max_drawdown)
-            ? `-${performance.max_drawdown.toFixed(2)}%`
-            : 'N/A'}
-          description="Largest peak-to-trough decline"
-        />
-
-        <RiskMetricCard
-          title="Holdings"
-          value={`${performance.num_stocks} stocks`}
-          description={`Initial capital: ${formatCurrency(performance.initial_capital)}`}
-        />
-      </div>
+      {/* Row 2 - Card 8: Cash Balance */}
+      <MetricCard
+        title="Cash Balance"
+        value={formatCurrency(performance.cash_balance ?? 0)}
+        subtitle={`${((performance.cash_balance ?? 0) / performance.current_value * 100).toFixed(1)}% of portfolio`}
+        icon={<Wallet className="h-5 w-5" />}
+        iconColor="bg-amber-100 text-amber-600"
+      />
     </div>
   );
 }
@@ -155,19 +145,20 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, subtitle, icon, iconColor, trend }: MetricCardProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
-      <div className="flex items-start justify-between mb-3">
-        <p className="text-sm font-medium text-gray-600">{title}</p>
-        <div className={`p-2 rounded-lg ${iconColor}`}>
+    <div className="bg-[#0f172a]/60 backdrop-blur-md border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-xl group">
+      <div className="flex items-start justify-between mb-4">
+        <p className="text-sm font-medium text-slate-400 group-hover:text-slate-300 transition-colors">{title}</p>
+        <div className={`p-2.5 rounded-lg ${iconColor} bg-opacity-10 ring-1 ring-inset ring-opacity-20`}>
           {icon}
         </div>
       </div>
       <div>
-        <p className={`text-2xl font-bold ${trend === 'positive' ? 'text-green-600' : trend === 'negative' ? 'text-red-600' : 'text-gray-900'}`}>
+        <p className={`text-2xl font-bold font-mono tabular-nums tracking-tight ${trend === 'positive' ? 'text-emerald-400' : trend === 'negative' ? 'text-rose-400' : 'text-slate-50'}`}>
           {value}
         </p>
         {subtitle && (
-          <p className={`text-sm mt-1 ${trend === 'positive' ? 'text-green-600' : trend === 'negative' ? 'text-red-600' : 'text-gray-500'}`}>
+          <p className={`text-sm mt-1.5 font-medium flex items-center gap-1 ${trend === 'positive' ? 'text-emerald-500' : trend === 'negative' ? 'text-rose-500' : 'text-slate-500'}`}>
+            {trend === 'positive' ? <ArrowUpRight className="w-3 h-3" /> : trend === 'negative' ? <ArrowDownRight className="w-3 h-3" /> : null}
             {subtitle}
           </p>
         )}
@@ -176,18 +167,3 @@ function MetricCard({ title, value, subtitle, icon, iconColor, trend }: MetricCa
   );
 }
 
-interface RiskMetricCardProps {
-  title: string;
-  value: string;
-  description: string;
-}
-
-function RiskMetricCard({ title, value, description }: RiskMetricCardProps) {
-  return (
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{title}</p>
-      <p className="text-xl font-bold text-gray-900 mb-1">{value}</p>
-      <p className="text-xs text-gray-600">{description}</p>
-    </div>
-  );
-}
