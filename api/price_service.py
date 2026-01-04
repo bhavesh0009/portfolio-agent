@@ -670,6 +670,95 @@ async def get_stock_price_history(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/portfolio-history/{portfolio_id}")
+async def get_portfolio_history(
+    portfolio_id: int,
+    period: str = Query("ALL", pattern="^(1M|3M|6M|1Y|ALL)$")
+) -> Dict[str, Any]:
+    """
+    Get historical portfolio value snapshots over time
+
+    Args:
+        portfolio_id: Portfolio ID
+        period: Time period filter ('1M', '3M', '6M', '1Y', 'ALL')
+
+    Returns:
+        Array of portfolio snapshots with date, value, and P&L percentage
+    """
+    try:
+        logger.info(f"Fetching portfolio history for portfolio {portfolio_id}, period={period}")
+
+        # Get portfolio to verify it exists
+        portfolio = db.get_portfolio_by_id(portfolio_id)
+        if not portfolio:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Portfolio {portfolio_id} not found"
+            )
+
+        # Get all snapshots (we'll filter by period if needed)
+        snapshots = db.get_portfolio_snapshots(portfolio_id)
+
+        if not snapshots:
+            logger.info(f"No snapshot history found for portfolio {portfolio_id}")
+            return {
+                'portfolio_id': portfolio_id,
+                'snapshots': [],
+                'count': 0,
+                'period': period,
+                'fetched_at': datetime.now().isoformat()
+            }
+
+        # Transform data to match frontend expectations
+        transformed_snapshots = [
+            {
+                'date': snapshot['snapshot_date'],
+                'value': snapshot['total_value'],
+                'pnl_pct': snapshot.get('total_return_pct', 0)
+            }
+            for snapshot in snapshots
+        ]
+
+        # Sort by date ascending (oldest first) for charting
+        transformed_snapshots.sort(key=lambda x: x['date'])
+
+        # Filter by period if not ALL
+        if period != 'ALL':
+            from datetime import timedelta
+
+            now = date.today()
+            period_map = {
+                '1M': 30,
+                '3M': 90,
+                '6M': 180,
+                '1Y': 365
+            }
+            days_back = period_map.get(period, 0)
+            cutoff_date = (now - timedelta(days=days_back)).isoformat()
+
+            transformed_snapshots = [
+                s for s in transformed_snapshots
+                if s['date'] >= cutoff_date
+            ]
+
+        response = {
+            'portfolio_id': portfolio_id,
+            'snapshots': transformed_snapshots,
+            'count': len(transformed_snapshots),
+            'period': period,
+            'fetched_at': datetime.now().isoformat()
+        }
+
+        logger.info(f"Found {len(transformed_snapshots)} snapshots for period {period}")
+        return response
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching portfolio history: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 # -----------------------------------------------------------------------------
 # Cloud Scheduler Endpoints

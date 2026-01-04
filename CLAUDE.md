@@ -1,6 +1,6 @@
 # Portfolio Agent - AI-Powered Equity Portfolio Management
 
-Multi-agent system for building and maintaining equity portfolios in Indian markets using screener.in (335+ financial ratios), Google News, and Gemini AI agents.
+Multi-agent system for building and maintaining equity portfolios in Indian markets using screener (335+ financial ratios), Google News, and Gemini AI agents.
 
 ## Setup Commands
 
