@@ -84,6 +84,37 @@ class DatabaseService:
         portfolio_id = response.data[0]['id']
         logger.info(f"Saved portfolio {portfolio_id} ({profile}, {timestamp}, cash: Rs. {cash_balance:,.2f})")
 
+        # Create initial snapshot
+        try:
+            # Parse timestamp to date
+            creation_date = datetime.strptime(timestamp, "%Y%m%d_%H%M%S").date()
+            
+            # Initial metrics (all zero except balance)
+            initial_metrics = {
+                'cash_balance': total_capital,
+                'invested_value': 0.0,
+                'total_return_pct': 0.0,
+                'total_return_absolute': 0.0,
+                'day_return_pct': 0.0,
+                'day_return_absolute': 0.0,
+                'volatility': 0.0,
+                'sharpe_ratio': 0.0,
+                'max_drawdown': 0.0,
+                'num_stocks': 0,
+                'avg_allocation_pct': 0.0
+            }
+            
+            self.store_portfolio_snapshot(
+                portfolio_id=portfolio_id,
+                snapshot_date=creation_date,
+                total_value=total_capital,
+                metrics=initial_metrics
+            )
+            logger.info(f"Created initial snapshot for portfolio {portfolio_id} on {creation_date}")
+            
+        except Exception as e:
+            logger.error(f"Failed to create initial snapshot: {e}")
+
         return portfolio_id
 
     def get_active_portfolio(self, profile: str) -> Optional[Dict[str, Any]]:
