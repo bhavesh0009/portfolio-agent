@@ -17,6 +17,8 @@ import {
   ChevronsUpDown,
   ChevronRight,
   Search,
+  Target,
+  AlertTriangle,
 } from 'lucide-react';
 import { StockDetail, StockPerformance } from '@/types';
 import {
@@ -146,26 +148,6 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
         size: 140,
       },
       {
-        accessorKey: 'stop_loss_price',
-        header: 'STOP LOSS',
-        cell: ({ row }) => (
-          <span className="font-mono metric-value tabular-nums font-medium text-rose-400">
-            {formatCurrency(row.original.stop_loss_price)}
-          </span>
-        ),
-        size: 120,
-      },
-      {
-        accessorKey: 'target_price',
-        header: 'TARGET',
-        cell: ({ row }) => (
-          <span className="font-mono metric-value tabular-nums font-medium text-emerald-400">
-            {formatCurrency(row.original.target_price)}
-          </span>
-        ),
-        size: 120,
-      },
-      {
         accessorKey: 'sector',
         header: 'SECTOR',
         cell: ({ row }) => (
@@ -293,6 +275,55 @@ export default function PositionsTable({ stocks, onStockClick }: PositionsTableP
                       <tr className="bg-slate-900/50 border-b border-slate-800">
                         <td colSpan={columns.length + 1} className="px-4 py-6">
                           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Price Targets Section */}
+                            <div className="lg:col-span-2 mb-6">
+                              <h4 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <Target className="w-4 h-4" />
+                                Price Targets & Risk Management
+                              </h4>
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                {/* Entry Price Reference */}
+                                <div className="bg-slate-800/30 border border-slate-700 rounded-lg p-4">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+                                    <p className="text-xs text-slate-400 uppercase tracking-wider font-medium">Entry Price</p>
+                                  </div>
+                                  <p className="text-xl font-mono font-bold tabular-nums text-slate-200">
+                                    {formatCurrency(row.original.entry_price)}
+                                  </p>
+                                  <p className="text-xs text-slate-500 mt-1">Initial purchase price</p>
+                                </div>
+
+                                {/* Stop Loss */}
+                                <div className="bg-rose-900/20 border border-rose-800/50 rounded-lg p-4">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <AlertTriangle className="w-4 h-4 text-rose-400" />
+                                    <p className="text-xs text-rose-300 uppercase tracking-wider font-medium">Stop Loss</p>
+                                  </div>
+                                  <p className="text-xl font-mono font-bold tabular-nums text-rose-400">
+                                    {formatCurrency(row.original.stop_loss_price)}
+                                  </p>
+                                  <p className="text-xs text-rose-400/70 mt-1">
+                                    {((row.original.stop_loss_price - row.original.entry_price) / row.original.entry_price * 100).toFixed(1)}% from entry
+                                  </p>
+                                </div>
+
+                                {/* Target Price */}
+                                <div className="bg-emerald-900/20 border border-emerald-800/50 rounded-lg p-4">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Target className="w-4 h-4 text-emerald-400" />
+                                    <p className="text-xs text-emerald-300 uppercase tracking-wider font-medium">Target Price</p>
+                                  </div>
+                                  <p className="text-xl font-mono font-bold tabular-nums text-emerald-400">
+                                    {formatCurrency(row.original.target_price)}
+                                  </p>
+                                  <p className="text-xs text-emerald-400/70 mt-1">
+                                    +{((row.original.target_price - row.original.entry_price) / row.original.entry_price * 100).toFixed(1)}% upside potential
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
                             {/* Investment Thesis */}
                             {row.original.rationale && (
                               <div>
