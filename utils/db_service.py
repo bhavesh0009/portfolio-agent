@@ -342,12 +342,15 @@ class DatabaseService:
         quantity: int,
         price: float,
         transaction_date: datetime,
-        notes: Optional[str] = None
+        notes: Optional[str] = None,
+        realized_pnl_pct: Optional[float] = None,
+        realized_pnl_absolute: Optional[float] = None,
+        trigger_type: Optional[str] = None
     ) -> int:
         """Record a buy/sell transaction"""
         total_amount = quantity * price
 
-        response = self.client.table('transactions').insert({
+        transaction_data = {
             'portfolio_id': portfolio_id,
             'stock_id': stock_id,
             'transaction_type': transaction_type,
@@ -356,7 +359,17 @@ class DatabaseService:
             'total_amount': total_amount,
             'transaction_date': transaction_date.isoformat(),
             'notes': notes
-        }).execute()
+        }
+
+        # Add optional fields if provided
+        if realized_pnl_pct is not None:
+            transaction_data['realized_pnl_pct'] = realized_pnl_pct
+        if realized_pnl_absolute is not None:
+            transaction_data['realized_pnl_absolute'] = realized_pnl_absolute
+        if trigger_type is not None:
+            transaction_data['trigger_type'] = trigger_type
+
+        response = self.client.table('transactions').insert(transaction_data).execute()
 
         transaction_id = response.data[0]['id']
         logger.info(f"Recorded {transaction_type} transaction {transaction_id}")

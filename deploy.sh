@@ -40,69 +40,94 @@ fi
 API_KEY="${SUPABASE_API_KEY:-$SUPABASE_KEY}"
 ENV_VARS="SUPABASE_URL=${SUPABASE_URL},SUPABASE_API_KEY=${API_KEY},GOOGLE_API_KEY=${GOOGLE_API_KEY}"
 
-echo "========================================================"
-echo "Deploying Backend..."
-echo "========================================================"
+# Parse argument (all, frontend, or backend)
+TARGET=${1:-all}
 
-# Make sure we have the keys
-if [ -z "$SUPABASE_URL" ] || [ -z "$API_KEY" ]; then
-    echo "Error: SUPABASE_URL and SUPABASE_API_KEY/SUPABASE_KEY must be set in .env"
-    exit 1
-fi
+echo "Deploying target: ${TARGET}"
 
-# Build Backend
-gcloud builds submit --config deployment/cloudbuild-backend.yaml .
+# Initialize URLs
+BACKEND_URL=""
+FRONTEND_URL=""
 
+# ========================================================
 # Deploy Backend
-# Using --allow-unauthenticated for simplicity as requested, but restricting via other means recommended for prod.
-# Using 512MiB memory to keep costs low.
-gcloud run deploy ${BACKEND_SERVICE} \
-    --image gcr.io/${PROJECT_ID}/${BACKEND_SERVICE} \
-    --platform managed \
-    --region ${REGION} \
-    --allow-unauthenticated \
-    --memory 512Mi \
-    --min-instances 0 \
-    --max-instances 1 \
-    --set-env-vars "${ENV_VARS}"
+# ========================================================
+if [[ "$TARGET" == "all" || "$TARGET" == "backend" ]]; then
+    echo "========================================================"
+    echo "Deploying Backend..."
+    echo "========================================================"
 
-# Get Backend URL
-BACKEND_URL=$(gcloud run services describe ${BACKEND_SERVICE} --platform managed --region ${REGION} --format 'value(status.url)')
-echo "Backend deployed at: ${BACKEND_URL}"
+    # Make sure we have the keys
+    if [ -z "$SUPABASE_URL" ] || [ -z "$API_KEY" ]; then
+        echo "Error: SUPABASE_URL and SUPABASE_API_KEY/SUPABASE_KEY must be set in .env"
+        exit 1
+    fi
 
-echo "========================================================"
-echo "Deploying Frontend..."
-echo "========================================================"
+    # Build Backend
+    gcloud builds submit --config deployment/cloudbuild-backend.yaml .
 
-# Build Frontend
-if [ -z "$BACKEND_URL" ]; then
-    echo "Error: Failed to get Backend URL."
-    exit 1
+    # Deploy Backend
+    gcloud run deploy ${BACKEND_SERVICE} \
+        --image gcr.io/${PROJECT_ID}/${BACKEND_SERVICE} \
+        --platform managed \
+        --region ${REGION} \
+        --allow-unauthenticated \
+        --memory 512Mi \
+        --min-instances 0 \
+        --max-instances 1 \
+        --set-env-vars "${ENV_VARS}"
+
+    # Get Backend URL
+    BACKEND_URL=$(gcloud run services describe ${BACKEND_SERVICE} --platform managed --region ${REGION} --format 'value(status.url)')
+    echo "Backend deployed at: ${BACKEND_URL}"
 fi
-gcloud builds submit --config deployment/cloudbuild-frontend.yaml --substitutions=_NEXT_PUBLIC_API_URL="${BACKEND_URL}" .
 
+# ========================================================
 # Deploy Frontend
-# Injecting NEXT_PUBLIC_API_URL ENV var
-gcloud run deploy ${FRONTEND_SERVICE} \
-    --image gcr.io/${PROJECT_ID}/${FRONTEND_SERVICE} \
-    --platform managed \
-    --region ${REGION} \
-    --allow-unauthenticated \
-    --memory 512Mi \
-    --min-instances 0 \
-    --max-instances 1 \
-    --set-env-vars NEXT_PUBLIC_API_URL=${BACKEND_URL}
+# ========================================================
+if [[ "$TARGET" == "all" || "$TARGET" == "frontend" ]]; then
+    echo "========================================================"
+    echo "Deploying Frontend..."
+    echo "========================================================"
 
-# Get Frontend URL
-FRONTEND_URL=$(gcloud run services describe ${FRONTEND_SERVICE} --platform managed --region ${REGION} --format 'value(status.url)')
+    # Always fetch the latest Backend URL if not just deployed
+    if [ -z "$BACKEND_URL" ]; then
+        BACKEND_URL=$(gcloud run services describe ${BACKEND_SERVICE} --platform managed --region ${REGION} --format 'value(status.url)')
+    fi
+    
+    if [ -z "$BACKEND_URL" ]; then
+        echo "Error: Failed to get Backend URL. Ensure backend is deployed first."
+        exit 1
+    fi
+    echo "Using Backend URL: ${BACKEND_URL}"
+
+    # Build Frontend
+    gcloud builds submit --config deployment/cloudbuild-frontend.yaml --substitutions=_NEXT_PUBLIC_API_URL="${BACKEND_URL}" .
+
+    # Deploy Frontend
+    gcloud run deploy ${FRONTEND_SERVICE} \
+        --image gcr.io/${PROJECT_ID}/${FRONTEND_SERVICE} \
+        --platform managed \
+        --region ${REGION} \
+        --allow-unauthenticated \
+        --memory 512Mi \
+        --min-instances 0 \
+        --max-instances 1 \
+        --set-env-vars "NEXT_PUBLIC_API_URL=${BACKEND_URL},SUPABASE_URL=${SUPABASE_URL},SUPABASE_API_KEY=${API_KEY}"
+    
+    FRONTEND_URL=$(gcloud run services describe ${FRONTEND_SERVICE} --platform managed --region ${REGION} --format 'value(status.url)')
+fi
 
 echo "========================================================"
 echo "Deployment Complete!"
 echo "========================================================"
-echo "Backend:  ${BACKEND_URL}"
-echo "Frontend: ${FRONTEND_URL}"
+if [ ! -z "$BACKEND_URL" ]; then
+    echo "Backend:  ${BACKEND_URL}"
+fi
+if [ ! -z "$FRONTEND_URL" ]; then
+    echo "Frontend: ${FRONTEND_URL}"
+fi
 echo ""
 echo "Next Steps:"
 echo "1. Configure Cloud Scheduler jobs for daily tasks."
 echo "   (See DEPLOYMENT.md for details)"
-echo ""

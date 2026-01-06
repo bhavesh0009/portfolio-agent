@@ -19,6 +19,9 @@ logs/
 # Cache directory
 .cache/
 
+# Social media posts drafts
+social-media-posts/
+
 # SQLite database backups
 *.db.sqlite_backup*
 *.db-*
@@ -45,6 +48,9 @@ temp_*.py
 check_*.py
 test_*.py
 *_temp.py
+
+# Debug scripts and SQL files
+scripts/debug/
 
 # Screenshots and images
 *.jpg

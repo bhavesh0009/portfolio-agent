@@ -22,6 +22,8 @@ from tools.performance_context_aggregator import get_performance_context_aggrega
 from agents.stock_news_agent import run_stock_news
 from agents.market_research_agent import run_market_research
 from agents.stock_screening_agent import run_stock_screening
+from agents.execution_engine import ExecutionEngine
+from agents.replacement_finder import ReplacementStockFinder
 
 logger = get_logger("agents.portfolio_manager")
 
@@ -49,15 +51,28 @@ class PortfolioManagerAgent:
         self._agent_cache: Dict[str, Any] = {}
         self.conversation_history: List[Dict[str, str]] = []
 
-        # Load news lookback period from config (default 5d for daily execution)
+        # Load config
         config = configparser.ConfigParser()
         config_path = Path(__file__).parent.parent / 'config.ini'
         if config_path.exists():
             config.read(config_path)
             self.news_lookback_period = config.get('NEWS', 'news_lookback_period', fallback='5d')
+            self.execution_mode = config.get('EXECUTION', 'execution_mode', fallback='manual')
         else:
             self.news_lookback_period = '5d'
+            self.execution_mode = 'manual'
+
+        self.config = config
         logger.debug(f"Portfolio manager news lookback period: {self.news_lookback_period}")
+        logger.info(f"Execution mode: {self.execution_mode}")
+
+        # Initialize execution components
+        self.execution_engine = ExecutionEngine(config)
+        self.replacement_finder = ReplacementStockFinder(config)
+
+        # Track current portfolio ID for execution methods
+        self.current_portfolio_id = None
+        self.current_stocks = []
 
         # Auto-migrate JSON portfolios on first run
         self._check_and_migrate_json_portfolios()
@@ -313,22 +328,30 @@ class PortfolioManagerAgent:
     ) -> Dict[str, List[Dict[str, Any]]]:
         """
         Check which stocks have breached stop-loss or target prices
+        and optionally execute exits
 
         Args:
             stocks: List of stock dicts
             current_prices: Dict of current prices
 
         Returns:
-            Dict with 'stop_loss_breached', 'target_reached', 'approaching_target'
+            Dict with 'stop_loss_breached', 'target_reached', 'approaching_target', 'executed_exits'
         """
         triggers = {
             'stop_loss_breached': [],
             'target_reached': [],
-            'approaching_target': []  # Within 5% of target
+            'approaching_target': [],  # Within 5% of target
+            'executed_exits': []  # Auto-executed exits
         }
 
         for stock in stocks:
             ticker = stock['ticker']
+
+            # Skip stocks with 0% allocation (already exited)
+            if stock.get('allocation_pct', 0) == 0:
+                logger.debug(f"Skipping {ticker} - already exited (0% allocation)")
+                continue
+
             current_price = current_prices.get(ticker, stock['entry_price'])
             stop_loss = stock['stop_loss_price']
             target = stock['target_price']
@@ -370,7 +393,527 @@ class PortfolioManagerAgent:
                 })
                 logger.info(f"APPROACHING TARGET: {ticker} at Rs. {current_price:.2f} (95% of target)")
 
+        # Auto-execute price-triggered exits if enabled
+        if self.execution_mode in ['price-only', 'full']:
+            logger.info("\nAuto-executing price-triggered exits...")
+
+            for item in triggers['stop_loss_breached']:
+                success = self._execute_triggered_exit(
+                    stock=item['stock'],
+                    current_price=item['current_price'],
+                    trigger_type='STOP_LOSS',
+                    reason=f"Stop-loss breach at Rs. {item['current_price']:.2f}"
+                )
+                if success:
+                    triggers['executed_exits'].append({**item, 'exit_type': 'STOP_LOSS'})
+
+            for item in triggers['target_reached']:
+                success = self._execute_triggered_exit(
+                    stock=item['stock'],
+                    current_price=item['current_price'],
+                    trigger_type='TARGET_HIT',
+                    reason=f"Target achieved at Rs. {item['current_price']:.2f}"
+                )
+                if success:
+                    triggers['executed_exits'].append({**item, 'exit_type': 'TARGET_HIT'})
+
+            if triggers['executed_exits']:
+                logger.info(f"✓ Auto-executed {len(triggers['executed_exits'])} price-triggered exits")
+
         return triggers
+
+    def _execute_triggered_exit(
+        self,
+        stock: Dict[str, Any],
+        current_price: float,
+        trigger_type: str,
+        reason: str
+    ) -> bool:
+        """
+        Execute automatic position exit
+
+        Args:
+            stock: Stock dict
+            current_price: Current price
+            trigger_type: 'STOP_LOSS', 'TARGET_HIT', 'NEWS_DRIVEN', 'LLM_RECOMMENDATION'
+            reason: Exit reason
+
+        Returns:
+            True if exit executed successfully
+        """
+        ticker = stock['ticker']
+        portfolio_id = self.current_portfolio_id
+
+        # Check with execution engine
+        can_execute, decision_reason = self.execution_engine.should_execute_exit(
+            portfolio_id=portfolio_id,
+            stock=stock,
+            trigger_type=trigger_type,
+            confidence=100.0 if trigger_type in ['STOP_LOSS', 'TARGET_HIT'] else 80.0,
+            reasoning=reason
+        )
+
+        if not can_execute:
+            logger.warning(f"Cannot execute exit for {ticker}: {decision_reason}")
+            return False
+
+        try:
+            # Validate current price
+            if current_price <= 0:
+                logger.error(f"Invalid price for {ticker}: {current_price}")
+                # Fallback to last daily price
+                current_price = self._get_last_known_price(stock.get('id'))
+                if not current_price:
+                    raise ValueError(f"Cannot determine price for {ticker}")
+
+            # Execute position exit
+            success = self.record_position_exit(
+                portfolio_id=portfolio_id,
+                ticker=ticker,
+                exit_price=current_price,
+                exit_reason=reason,
+                exit_type=trigger_type
+            )
+
+            if not success:
+                raise RuntimeError(f"Failed to record exit for {ticker}")
+
+            # Update portfolio cash_balance
+            exit_proceeds = stock['allocation_amount']  # Original investment
+            exit_value = (current_price / stock['entry_price']) * exit_proceeds
+            self._update_cash_balance(portfolio_id, exit_value)
+
+            # Log to rebalancing_history
+            rebalance_date = datetime.now()
+            self.db.record_rebalancing(
+                portfolio_id=portfolio_id,
+                rebalancing_date=rebalance_date,
+                reason=f"AUTO-EXECUTE: {reason}",
+                action_type='EXIT',
+                affected_stocks=[ticker],
+                allocation_changes={ticker: (stock['allocation_pct'], 0.0)},
+                expected_result=f"Exit {ticker}, realized P&L {((current_price/stock['entry_price'])-1)*100:.2f}%"
+            )
+
+            # Update rebalancing status to EXECUTED
+            actual_pnl = ((current_price/stock['entry_price'])-1)*100
+            try:
+                # First, find the most recent EXIT rebalancing record for this stock today
+                today_start = rebalance_date.date().isoformat()
+                today_end = today_start + ' 23:59:59'
+
+                recent_records = self.db.client.table('rebalancing_history')\
+                    .select('id')\
+                    .eq('portfolio_id', portfolio_id)\
+                    .eq('action_type', 'EXIT')\
+                    .gte('rebalancing_date', today_start)\
+                    .lte('rebalancing_date', today_end)\
+                    .order('created_at', desc=True)\
+                    .limit(1)\
+                    .execute()
+
+                if recent_records.data:
+                    record_id = recent_records.data[0]['id']
+                    self.db.client.table('rebalancing_history')\
+                        .update({
+                            'status': 'EXECUTED',
+                            'executed_at': rebalance_date.isoformat(),
+                            'actual_result': f"Successfully exited {ticker}. Actual P&L: {actual_pnl:.2f}%"
+                        })\
+                        .eq('id', record_id)\
+                        .execute()
+                    logger.debug(f"Updated rebalancing status to EXECUTED for {ticker}")
+            except Exception as e:
+                logger.warning(f"Failed to update rebalancing status: {e}")
+
+            logger.info(f"✓ AUTO-EXECUTED EXIT: {ticker} at Rs. {current_price:.2f}")
+            return True
+
+        except Exception as e:
+            logger.error(f"Exit execution failed for {ticker}: {e}")
+
+            # Log failure to market_events
+            try:
+                self.db.record_market_event(
+                    event_type='INTERNAL',
+                    title=f"EXECUTION FAILED: {ticker}",
+                    description=f"Failed to execute {trigger_type} exit: {str(e)}",
+                    event_date=datetime.now(),
+                    portfolio_id=portfolio_id,
+                    stock_id=stock.get('id'),
+                    impact='NEGATIVE',
+                    action_taken='ERROR_LOGGED'
+                )
+            except:
+                pass  # Don't fail if event logging fails
+
+            return False
+
+    def _find_and_add_replacement(
+        self,
+        exited_stock: Dict[str, Any],
+        portfolio_id: int,
+        portfolio_profile: str
+    ) -> Optional[int]:
+        """
+        Find and add replacement stock after exit
+
+        Args:
+            exited_stock: Stock that was exited
+            portfolio_id: Portfolio ID
+            portfolio_profile: Portfolio profile
+
+        Returns:
+            New stock ID or None
+        """
+        # Check if replacement search is enabled
+        if not self.config.getboolean('EXECUTION', 'enable_replacement_search', fallback=True):
+            logger.info("Replacement search disabled, keeping cash")
+            return None
+
+        # Get available cash
+        available_cash = self._get_available_cash(portfolio_id)
+
+        # Check minimum cash reserve
+        min_reserve_pct = self.config.getfloat('EXECUTION', 'min_cash_balance_pct', fallback=5.0)
+        portfolio_data = self.db.get_portfolio_by_id(portfolio_id)
+        total_capital = portfolio_data['total_capital']
+        min_reserve = total_capital * (min_reserve_pct / 100)
+
+        if available_cash <= min_reserve:
+            logger.warning(f"Insufficient cash for replacement (Rs. {available_cash:.2f})")
+            return None
+
+        # Get current holdings
+        current_stocks = self.db.get_portfolio_stocks(portfolio_id)
+        active_stocks = [s for s in current_stocks if s.get('allocation_pct', 0) > 0]
+
+        # Find replacement
+        try:
+            replacement_data = self.replacement_finder.find_replacement(
+                exited_stock=exited_stock,
+                portfolio_profile=portfolio_profile,
+                available_capital=available_cash - min_reserve,
+                current_holdings=active_stocks
+            )
+
+            if not replacement_data:
+                logger.warning("No suitable replacement found")
+                return None
+
+            # Calculate allocation (match exited stock's allocation)
+            allocation_amount = min(
+                exited_stock.get('allocation_amount', 0),
+                available_cash - min_reserve
+            )
+
+            # Calculate allocation percentage
+            total_invested = sum(s.get('allocation_amount', 0) for s in active_stocks)
+            allocation_pct = (allocation_amount / (total_invested + allocation_amount)) * 100 if total_invested + allocation_amount > 0 else 0
+
+            # Add allocation fields
+            replacement_data['allocation_pct'] = allocation_pct
+            replacement_data['allocation_amount'] = allocation_amount
+            replacement_data['shares'] = int(allocation_amount / replacement_data['entry_price']) if replacement_data['entry_price'] > 0 else 0
+
+            # Add investment view
+            replacement_data['investment_view'] = {
+                'market_outlook': f"Replacement for {exited_stock['ticker']}",
+                'stock_rationale': replacement_data.get('rationale', 'Replacement stock'),
+                'holding_period': exited_stock.get('investment_view', {}).get('holding_period', '3-6 months'),
+                'exit_triggers': [],
+                'review_triggers': []
+            }
+
+            # Check with execution engine
+            can_execute, reason = self.execution_engine.should_execute_entry(
+                portfolio_id=portfolio_id,
+                stock_data=replacement_data,
+                confidence=75.0,
+                replacement_for=exited_stock['ticker']
+            )
+
+            if not can_execute:
+                logger.warning(f"Cannot add replacement: {reason}")
+                return None
+
+            # Add to portfolio
+            stock_id = self.record_position_entry(portfolio_id, replacement_data)
+
+            if stock_id:
+                # Deduct from cash balance
+                self._update_cash_balance(portfolio_id, -allocation_amount)
+
+                # Log rebalancing
+                rebalance_date = datetime.now()
+                self.db.record_rebalancing(
+                    portfolio_id=portfolio_id,
+                    rebalancing_date=rebalance_date,
+                    reason=f"AUTO-EXECUTE: Replacement for {exited_stock['ticker']}",
+                    action_type='ENTRY',
+                    affected_stocks=[replacement_data['ticker']],
+                    allocation_changes={replacement_data['ticker']: (0.0, allocation_pct)},
+                    expected_result=f"Added {replacement_data['ticker']} with {allocation_pct:.1f}% allocation"
+                )
+
+                # Update rebalancing status to EXECUTED
+                try:
+                    # First, find the most recent ENTRY rebalancing record for this stock today
+                    today_start = rebalance_date.date().isoformat()
+                    today_end = today_start + ' 23:59:59'
+
+                    recent_records = self.db.client.table('rebalancing_history')\
+                        .select('id')\
+                        .eq('portfolio_id', portfolio_id)\
+                        .eq('action_type', 'ENTRY')\
+                        .gte('rebalancing_date', today_start)\
+                        .lte('rebalancing_date', today_end)\
+                        .order('created_at', desc=True)\
+                        .limit(1)\
+                        .execute()
+
+                    if recent_records.data:
+                        record_id = recent_records.data[0]['id']
+                        self.db.client.table('rebalancing_history')\
+                            .update({
+                                'status': 'EXECUTED',
+                                'executed_at': rebalance_date.isoformat(),
+                                'actual_result': f"Successfully added {replacement_data['ticker']} with {allocation_pct:.1f}% allocation"
+                            })\
+                            .eq('id', record_id)\
+                            .execute()
+                        logger.debug(f"Updated rebalancing status to EXECUTED for {replacement_data['ticker']}")
+                except Exception as e:
+                    logger.warning(f"Failed to update rebalancing status: {e}")
+
+                logger.info(f"✓ AUTO-EXECUTED ENTRY: {replacement_data['ticker']} ({allocation_pct:.1f}%)")
+
+            return stock_id
+
+        except Exception as e:
+            logger.error(f"Failed to find/add replacement: {e}")
+            return None
+
+    def _update_cash_balance(self, portfolio_id: int, amount: float) -> None:
+        """
+        Update portfolio cash balance
+
+        Args:
+            portfolio_id: Portfolio ID
+            amount: Amount to add (positive for sell) or subtract (negative for buy)
+        """
+        try:
+            portfolio = self.db.get_portfolio_by_id(portfolio_id)
+            current_cash = portfolio.get('cash_balance', 0) or 0
+            new_cash = current_cash + amount
+
+            # Update in database
+            self.db.client.table('portfolios')\
+                .update({'cash_balance': new_cash})\
+                .eq('id', portfolio_id)\
+                .execute()
+
+            logger.info(f"Updated cash balance: Rs. {current_cash:,.2f} → Rs. {new_cash:,.2f} (change: {amount:+,.2f})")
+
+        except Exception as e:
+            logger.error(f"Failed to update cash balance: {e}")
+
+    def _get_available_cash(self, portfolio_id: int) -> float:
+        """
+        Get current available cash
+
+        Args:
+            portfolio_id: Portfolio ID
+
+        Returns:
+            Available cash amount
+        """
+        try:
+            portfolio = self.db.get_portfolio_by_id(portfolio_id)
+            cash = portfolio.get('cash_balance', 0) or 0
+            return float(cash)
+        except Exception as e:
+            logger.error(f"Failed to get cash balance: {e}")
+            return 0.0
+
+    def _get_last_known_price(self, stock_id: int) -> Optional[float]:
+        """
+        Get last known price from daily_prices table
+
+        Args:
+            stock_id: Stock ID
+
+        Returns:
+            Last known price or None
+        """
+        try:
+            response = self.db.client.table('daily_prices')\
+                .select('close_price')\
+                .eq('stock_id', stock_id)\
+                .order('price_date', desc=True)\
+                .limit(1)\
+                .execute()
+
+            if response.data:
+                return response.data[0]['close_price']
+
+            return None
+
+        except Exception as e:
+            logger.error(f"Failed to get last known price: {e}")
+            return None
+
+    def _evaluate_news_exits(
+        self,
+        stocks: List[Dict[str, Any]],
+        news_analysis: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
+        """
+        Use LLM to evaluate if news warrants exit
+
+        Args:
+            stocks: List of stocks
+            news_analysis: News analysis dict
+
+        Returns:
+            List of exit recommendations
+        """
+        exit_recommendations = []
+
+        for stock in stocks:
+            ticker = stock['ticker']
+            news = news_analysis.get(ticker, {})
+
+            # Skip if news is neutral or positive
+            sentiment = news.get('sentiment', 'neutral')
+            if sentiment not in ['negative', 'very_negative']:
+                continue
+
+            # Ask LLM to evaluate exit necessity
+            current_price = self.current_prices.get(ticker, stock['entry_price'])
+            current_pnl = ((current_price / stock['entry_price']) - 1) * 100
+
+            prompt = f"""
+You are evaluating whether to exit a stock position based on recent news.
+
+Stock: {stock['name']} ({ticker})
+Sector: {stock.get('sector')}
+Entry Price: Rs. {stock['entry_price']:.2f}
+Current Price: Rs. {current_price:.2f}
+Current P&L: {current_pnl:.2f}%
+
+Recent News Summary:
+{news.get('full_analysis', 'No detailed analysis available')}
+
+Investment Thesis:
+{stock.get('investment_view', {}).get('stock_rationale', 'N/A')}
+
+Exit Triggers:
+{stock.get('investment_view', {}).get('exit_triggers', [])}
+
+Based on this information:
+1. Does the news invalidate the investment thesis?
+2. Are any exit triggers hit?
+3. Is there fundamental deterioration or just temporary noise?
+4. Should we exit this position NOW?
+
+Respond in JSON format:
+{{
+    "should_exit": true/false,
+    "confidence": 0-100,
+    "reasoning": "detailed explanation",
+    "urgency": "LOW/MEDIUM/HIGH"
+}}
+            """
+
+            try:
+                response = generate_content(
+                    contents=prompt,
+                    model=self.model_name,
+                    temperature=0.3,
+                    verbose=False,
+                    agent_name="news_exit_evaluator"
+                )
+
+                # Parse response
+                result = json.loads(response.strip().replace('```json', '').replace('```', ''))
+
+                if result.get('should_exit') and result.get('confidence', 0) >= 80:
+                    exit_recommendations.append({
+                        'stock': stock,
+                        'confidence': result['confidence'],
+                        'reasoning': result['reasoning'],
+                        'urgency': result.get('urgency', 'MEDIUM')
+                    })
+                    logger.warning(
+                        f"NEWS EXIT CANDIDATE: {ticker} "
+                        f"(confidence: {result['confidence']}%, urgency: {result['urgency']})"
+                    )
+
+            except Exception as e:
+                logger.error(f"Failed to evaluate news exit for {ticker}: {e}")
+
+        return exit_recommendations
+
+    def _generate_execution_summary(self, portfolio_id: int) -> Dict[str, Any]:
+        """
+        Generate summary of executed actions
+
+        Args:
+            portfolio_id: Portfolio ID
+
+        Returns:
+            Execution summary dict
+        """
+        from datetime import date, datetime
+
+        try:
+            # Get today's transactions
+            transactions = self.db.get_transactions(
+                portfolio_id=portfolio_id,
+                start_date=date.today(),
+                end_date=date.today()
+            )
+
+            # Get today's rebalancing history
+            rebalancing = self.db.get_rebalancing_history(portfolio_id, limit=10)
+            # Parse rebalancing_date string to datetime before comparing
+            today_rebalancing = []
+            for r in rebalancing:
+                rebal_date_str = r['rebalancing_date']
+                # Handle both datetime strings with time and date-only strings
+                if isinstance(rebal_date_str, str):
+                    # Try parsing with time first, fall back to date-only
+                    try:
+                        rebal_date = datetime.fromisoformat(rebal_date_str.replace('Z', '+00:00')).date()
+                    except ValueError:
+                        rebal_date = datetime.strptime(rebal_date_str[:10], '%Y-%m-%d').date()
+                else:
+                    rebal_date = rebal_date_str.date() if hasattr(rebal_date_str, 'date') else rebal_date_str
+
+                if rebal_date == date.today():
+                    today_rebalancing.append(r)
+
+            summary = {
+                'transactions_count': len(transactions),
+                'exits_count': len([t for t in transactions if t['transaction_type'] == 'SELL']),
+                'entries_count': len([t for t in transactions if t['transaction_type'] == 'BUY']),
+                'rebalancing_actions': len(today_rebalancing),
+                'transactions': transactions,
+                'rebalancing': today_rebalancing
+            }
+
+            logger.info(
+                f"Execution summary: {summary['exits_count']} exits, "
+                f"{summary['entries_count']} entries, "
+                f"{summary['rebalancing_actions']} rebalancing actions"
+            )
+
+            return summary
+
+        except Exception as e:
+            logger.error(f"Failed to generate execution summary: {e}")
+            return {'error': str(e)}
 
     def analyze_portfolio_news(self, stocks: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
@@ -553,12 +1096,14 @@ class PortfolioManagerAgent:
 
             stock_id = stock['id']
             entry_price = stock['entry_price']
-            quantity = stock['allocation_amount'] / entry_price
+            allocation_amount = stock['allocation_amount']
+            quantity = allocation_amount / entry_price
 
             # Calculate P&L
             gain_loss_pct = (exit_price - entry_price) / entry_price * 100
+            gain_loss_absolute = (exit_price - entry_price) * quantity
 
-            # Record sell transaction
+            # Record sell transaction with P&L and trigger type
             self.db.record_transaction(
                 portfolio_id=portfolio_id,
                 stock_id=stock_id,
@@ -566,12 +1111,23 @@ class PortfolioManagerAgent:
                 quantity=int(quantity),
                 price=exit_price,
                 transaction_date=datetime.now(),
-                notes=f"{exit_type}: {exit_reason} (P&L: {gain_loss_pct:+.2f}%)"
+                notes=f"{exit_type}: {exit_reason} (P&L: {gain_loss_pct:+.2f}%)",
+                realized_pnl_pct=gain_loss_pct,
+                realized_pnl_absolute=gain_loss_absolute,
+                trigger_type=exit_type
             )
 
-            # Mark stock as inactive (don't delete for audit trail)
-            sql = "UPDATE stocks SET allocation_pct = 0, allocation_amount = 0 WHERE id = ?"
-            self.db.execute_update(sql, (stock_id,))
+            # Mark stock as inactive and record exit details (don't delete for audit trail)
+            self.db.client.table('stocks')\
+                .update({
+                    'allocation_pct': 0,
+                    'allocation_amount': 0,
+                    'exit_date': datetime.now().isoformat(),
+                    'exit_price': exit_price,
+                    'exit_type': exit_type
+                })\
+                .eq('id', stock_id)\
+                .execute()
 
             # Record market event
             self.db.record_market_event(
@@ -930,10 +1486,17 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
         portfolio_id = db_portfolio['id']
         logger.info(f"Managing portfolio ID: {portfolio_id} (Profile: {db_portfolio.get('profile')})")
 
+        # Store portfolio info for execution methods
+        self.current_portfolio_id = portfolio_id
+        self.current_stocks = stocks
+
         # Step 2: Get current prices
         logger.info("\n[2/10] Fetching current prices...")
         current_prices = self.get_current_prices(stocks)
         logger.info(f"Fetched prices for {len(current_prices)} stocks")
+
+        # Store for execution methods
+        self.current_prices = current_prices
 
         # Step 3: Persist prices to database
         logger.info("\n[3/10] Persisting daily prices...")
@@ -959,21 +1522,86 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
             logger.error(f"Failed to update benchmark comparisons: {e}")
             # Don't fail entire run if benchmarks fail
 
-        # Step 6: Check price triggers
-        logger.info("\n[6/10] Checking stop-loss and target triggers...")
+        # Step 6: Check price triggers AND auto-execute exits
+        logger.info("\n[6/13] Checking stop-loss and target triggers...")
         price_triggers = self.check_price_triggers(stocks, current_prices)
 
         logger.info(f"Stop-loss breaches: {len(price_triggers['stop_loss_breached'])}")
         logger.info(f"Targets reached: {len(price_triggers['target_reached'])}")
         logger.info(f"Approaching targets: {len(price_triggers['approaching_target'])}")
+        logger.info(f"Executed exits: {len(price_triggers.get('executed_exits', []))}")
+
+        # Step 6a: Find and add replacement stocks
+        executed_exits = price_triggers.get('executed_exits', [])
+        if executed_exits:
+            logger.info(f"\n[6a/13] Finding replacement stocks for {len(executed_exits)} exited positions...")
+            replacements_added = 0
+
+            for exit_item in executed_exits:
+                replacement_id = self._find_and_add_replacement(
+                    exited_stock=exit_item['stock'],
+                    portfolio_id=portfolio_id,
+                    portfolio_profile=db_portfolio['profile']
+                )
+                if replacement_id:
+                    replacements_added += 1
+
+            logger.info(f"✓ Added {replacements_added}/{len(executed_exits)} replacement stocks")
+
+            # Reload portfolio with updated positions
+            portfolio = self.load_portfolio()
+            stocks = portfolio.get('stocks', [])
+            self.current_stocks = stocks
 
         # Step 7: Analyze news
-        logger.info("\n[7/10] Analyzing news for portfolio stocks...")
+        logger.info("\n[7/13] Analyzing news for portfolio stocks...")
         news_analysis = self.analyze_portfolio_news(stocks)
         logger.info(f"Analyzed news for {len(news_analysis)} stocks")
 
+        # Step 7a: Evaluate news-driven exit opportunities
+        if self.execution_mode == 'full':
+            logger.info("\n[7a/13] Evaluating news-driven exit opportunities...")
+            news_driven_exits = self._evaluate_news_exits(stocks, news_analysis)
+
+            if news_driven_exits:
+                logger.info(f"Found {len(news_driven_exits)} news-driven exit candidates")
+                for exit_rec in news_driven_exits:
+                    stock = exit_rec['stock']
+                    current_price = current_prices.get(stock['ticker'], stock['entry_price'])
+
+                    success = self._execute_triggered_exit(
+                        stock=stock,
+                        current_price=current_price,
+                        trigger_type='NEWS_DRIVEN',
+                        reason=f"News-driven exit: {exit_rec['reasoning'][:100]}"
+                    )
+
+                    if success:
+                        # Add to executed exits for potential replacement
+                        executed_exits.append({
+                            'stock': stock,
+                            'current_price': current_price,
+                            'exit_type': 'NEWS_DRIVEN'
+                        })
+
+                # Find replacements for news-driven exits if any
+                if executed_exits:
+                    logger.info(f"\n[7a.1/13] Finding replacements for news-driven exits...")
+                    for exit_item in executed_exits:
+                        if exit_item.get('exit_type') == 'NEWS_DRIVEN':
+                            replacement_id = self._find_and_add_replacement(
+                                exited_stock=exit_item['stock'],
+                                portfolio_id=portfolio_id,
+                                portfolio_profile=db_portfolio['profile']
+                            )
+
+                    # Reload portfolio
+                    portfolio = self.load_portfolio()
+                    stocks = portfolio.get('stocks', [])
+                    self.current_stocks = stocks
+
         # Step 8: Market research
-        logger.info("\n[8/10] Researching current market conditions...")
+        logger.info("\n[8/13] Researching current market conditions...")
         try:
             market_query = f"Indian stock market trends, Nifty outlook, and sector performance. Focus on developments from the last {self.news_lookback_period} only."
             market_outlook = run_market_research(market_query)
@@ -983,7 +1611,7 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
             market_outlook = "Market data unavailable"
 
         # Step 9: Generate performance context
-        logger.info("\n[9/10] Generating performance context...")
+        logger.info("\n[9/13] Generating performance context...")
         performance_context = None
         try:
             performance_context = self.performance_aggregator.generate_context(
@@ -998,7 +1626,7 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
             performance_context = None
 
         # Step 10: Generate recommendation
-        logger.info("\n[10/10] Generating portfolio recommendation...")
+        logger.info("\n[10/13] Generating portfolio recommendation...")
         recommendation = self.generate_recommendation(
             portfolio,
             current_prices,
@@ -1016,8 +1644,8 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
         else:
             priority = "MEDIUM"
 
-        # Store update in database
-        logger.info("\nStoring manager update in database...")
+        # Step 11: Store manager update
+        logger.info("\n[11/13] Storing manager update in database...")
         update_id = self.store_manager_update(
             portfolio_id,
             recommendation,
@@ -1026,13 +1654,17 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
         )
         logger.info(f"Manager update stored (ID: {update_id})")
 
-        # Summary
-        logger.info("\n" + "="*80)
-        logger.info("PORTFOLIO MANAGER - Analysis Complete")
+        # Step 12: Generate execution summary
+        logger.info("\n[12/13] Generating execution summary...")
+        execution_summary = self._generate_execution_summary(portfolio_id)
+
+        # Step 13: Final summary
+        logger.info("\n[13/13] PORTFOLIO MANAGER - Analysis Complete")
         logger.info("="*80)
         logger.info(f"Recommendation: {recommendation.get('recommendation', 'UNKNOWN')}")
         logger.info(f"Confidence: {recommendation.get('confidence_level', 0)}%")
         logger.info(f"Priority: {priority}")
+        logger.info(f"Executions: {execution_summary.get('exits_count', 0)} exits, {execution_summary.get('entries_count', 0)} entries")
         logger.info("="*80)
 
         return {
@@ -1043,7 +1675,8 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
             'news_analysis': news_analysis,
             'market_outlook': market_outlook,
             'recommendation': recommendation,
-            'priority': priority
+            'priority': priority,
+            'execution_summary': execution_summary
         }
 
 

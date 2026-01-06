@@ -1,11 +1,11 @@
 {
-  "gemini-3-pro": {
+  "gemini-3-pro-preview": {
     "input_cost_per_million": 2.00,
     "output_cost_per_million": 12.00,
     "tier": "high",
     "notes": "Preview pricing. ≤200K tokens: $2/$12 per million. >200K tokens: $4/$18 per million. 1M token context window."
   },
-  "gemini-3-flash": {
+  "gemini-3-flash-preview": {
     "input_cost_per_million": 0.50,
     "output_cost_per_million": 3.00,
     "tier": "mid",

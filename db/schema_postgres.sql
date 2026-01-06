@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS portfolios (
     timestamp TEXT UNIQUE NOT NULL,  -- YYYYMMDD_HHMMSS format
     json_path TEXT,  -- Path to JSON file for reference
     notes TEXT,  -- Optional notes about the portfolio
-    is_active BOOLEAN DEFAULT TRUE  -- Whether this is the current active portfolio
+    is_active BOOLEAN DEFAULT TRUE,  -- Whether this is the current active portfolio
+    cash_balance DOUBLE PRECISION DEFAULT 0  -- Available cash after investments
 );
 
 -- Stocks in portfolio
@@ -31,6 +32,10 @@ CREATE TABLE IF NOT EXISTS stocks (
     news_sentiment TEXT,  -- Latest news sentiment
     added_at TIMESTAMP DEFAULT NOW(),
     exchange TEXT DEFAULT 'NSE',
+    exit_date TIMESTAMP,  -- When position was exited
+    exit_price DOUBLE PRECISION,  -- Exit price
+    exit_type TEXT,  -- 'STOP_LOSS', 'TARGET_HIT', 'NEWS_DRIVEN', 'LLM_RECOMMENDATION', 'MANUAL'
+    shares INTEGER,  -- Number of shares held
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
     UNIQUE(portfolio_id, ticker)
 );
@@ -69,6 +74,9 @@ CREATE TABLE IF NOT EXISTS transactions (
     transaction_date TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
     notes TEXT,
+    realized_pnl_pct DOUBLE PRECISION,  -- P&L percentage for SELL transactions
+    realized_pnl_absolute DOUBLE PRECISION,  -- P&L absolute amount for SELL transactions
+    trigger_type TEXT,  -- 'STOP_LOSS', 'TARGET_HIT', 'NEWS_DRIVEN', 'LLM_RECOMMENDATION', 'MANUAL'
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(id),
     FOREIGN KEY (stock_id) REFERENCES stocks(id)
 );

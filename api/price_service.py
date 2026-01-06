@@ -259,16 +259,19 @@ async def get_portfolio_stats(portfolio_id: int) -> Dict[str, Any]:
                 'average_allocation': 0
             }
 
+        # Filter to only active stocks (allocation > 0)
+        active_stocks = [s for s in stocks if s.get('allocation_pct', 0) > 0]
+
         # Calculate stats
-        total_allocated = sum(s.get('allocation_amount', 0) for s in stocks)
-        stock_count = len(stocks)
+        total_allocated = sum(s.get('allocation_amount', 0) for s in active_stocks)
+        stock_count = len(active_stocks)
         average_allocation = total_allocated / stock_count if stock_count > 0 else 0
         cash_balance = portfolio.get('cash_balance', 0.0)
         total_value = total_allocated + cash_balance
 
-        # Sector distribution
+        # Sector distribution (only active stocks)
         sector_distribution = {}
-        for stock in stocks:
+        for stock in active_stocks:
             sector = stock.get('sector', 'Unknown')
             amount = stock.get('allocation_amount', 0)
             if sector in sector_distribution:

@@ -57,6 +57,11 @@ class PerformanceCalculator:
         stock_details = []
 
         for stock in stocks:
+            # Skip exited stocks (allocation = 0 or exit_date set)
+            if stock.get('allocation_pct', 0) == 0 or stock.get('exit_date') is not None:
+                logger.debug(f"Skipping exited stock {stock['ticker']} (allocation: {stock.get('allocation_pct')}%, exit_date: {stock.get('exit_date')})")
+                continue
+
             # Get latest price from database
             latest_price_data = self.db.get_latest_stock_price(stock['id'])
 
@@ -124,7 +129,7 @@ class PerformanceCalculator:
             'initial_capital': initial_capital,
             'pnl_absolute': portfolio_pnl_absolute,  # Now includes cash
             'pnl_pct': portfolio_pnl_pct,  # Now includes cash
-            'num_stocks': len(stocks),
+            'num_stocks': len(stock_details),  # Count only active stocks
             'stock_details': stock_details,
             'calculated_at': datetime.now().isoformat()
         }
