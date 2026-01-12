@@ -469,37 +469,48 @@ class PerformanceCalculator:
                 'error': 'Insufficient index data'
             }
 
-        # Calculate index return using correct baseline
+        # Calculate index return using closest available dates
         # Get baseline: last trading day on or before start_date
-        baseline_history = self.db.get_index_price_history(
-            index_symbol,
-            end_date=start_date,
-            limit=1
-        )
+        baseline_price_data = self.db.get_index_price_on_or_before(index_symbol, start_date)
 
         # Get end price: last trading day on or before end_date
-        end_history = self.db.get_index_price_history(
-            index_symbol,
-            end_date=end_date,
-            limit=1
-        )
+        end_price_data = self.db.get_index_price_on_or_before(index_symbol, end_date)
 
-        if not baseline_history or not end_history:
-            logger.warning(f"Could not find baseline or end price for {index_symbol}")
+        if not baseline_price_data:
+            logger.error(f"No baseline data for {index_symbol} before {start_date}")
             return {
                 'portfolio_return': portfolio_return,
-                'index_return': 0,
-                'alpha': portfolio_return,
+                'index_return': None,
+                'alpha': None,
                 'beta': None,
-                'error': 'Missing baseline or end price'
+                'error': f'No baseline data before {start_date}'
             }
 
-        start_price = baseline_history[0]['close_price']
-        start_date_actual = baseline_history[0]['price_date']
-        end_price = end_history[0]['close_price']
-        end_date_actual = end_history[0]['price_date']
+        if not end_price_data:
+            logger.error(f"No end data for {index_symbol} before {end_date}")
+            return {
+                'portfolio_return': portfolio_return,
+                'index_return': None,
+                'alpha': None,
+                'beta': None,
+                'error': f'No end data before {end_date}'
+            }
 
-        logger.debug(f"Baseline: {start_date_actual} close={start_price:.2f}, End: {end_date_actual} close={end_price:.2f}")
+        start_price = baseline_price_data['close_price']
+        start_date_actual = baseline_price_data['price_date']
+        end_price = end_price_data['close_price']
+        end_date_actual = end_price_data['price_date']
+
+        # Convert date strings if needed
+        if isinstance(start_date_actual, str):
+            start_date_actual = datetime.fromisoformat(start_date_actual).date()
+        if isinstance(end_date_actual, str):
+            end_date_actual = datetime.fromisoformat(end_date_actual).date()
+
+        logger.info(
+            f"Benchmark {index_symbol}: Baseline {start_date_actual} (target {start_date}) = {start_price:.2f}, "
+            f"End {end_date_actual} (target {end_date}) = {end_price:.2f}"
+        )
 
         index_return = ((end_price - start_price) / start_price) * 100
 
@@ -641,6 +652,14 @@ class PerformanceCalculator:
                     index_symbol,
                     period
                 )
+
+                # Skip if no index data available
+                if comparison['index_return'] is None:
+                    logger.warning(
+                        f"Skipping {index_symbol} {period} benchmark - "
+                        f"no index data: {comparison.get('error', 'Unknown error')}"
+                    )
+                    continue
 
                 # Store in database
                 self.db.store_benchmark_comparison(

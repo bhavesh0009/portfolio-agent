@@ -760,6 +760,47 @@ class DatabaseService:
         response = query.execute()
         return response.data
 
+    def get_index_price_on_or_before(
+        self,
+        index_symbol: str,
+        target_date: date
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Get the latest index price on or before target_date.
+        Searches backward up to 15 days to handle weekends/holidays.
+
+        Args:
+            index_symbol: Index symbol (e.g., '^NSEI')
+            target_date: Target date to search from
+
+        Returns:
+            Price record dict or None if no data within 15 days
+        """
+        from datetime import timedelta
+
+        search_start = target_date - timedelta(days=15)
+
+        response = self.client.table('index_prices')\
+            .select('*')\
+            .eq('index_symbol', index_symbol)\
+            .gte('price_date', search_start.isoformat())\
+            .lte('price_date', target_date.isoformat())\
+            .order('price_date', desc=True)\
+            .limit(1)\
+            .execute()
+
+        if response.data:
+            found_date = response.data[0]['price_date']
+            if isinstance(found_date, str):
+                found_date = datetime.fromisoformat(found_date).date()
+
+            days_diff = (target_date - found_date).days
+            logger.debug(f"Found {index_symbol} on {found_date} ({days_diff}d before {target_date})")
+            return response.data[0]
+        else:
+            logger.warning(f"No {index_symbol} data within 15 days before {target_date}")
+            return None
+
     def get_latest_index_price(self, index_symbol: str) -> Optional[Dict[str, Any]]:
         """Get most recent price for an index"""
         prices = self.get_index_price_history(index_symbol, limit=1)
@@ -851,10 +892,10 @@ class DatabaseService:
         beta: Optional[float] = None
     ) -> int:
         """Store benchmark comparison data (upsert based on unique constraint)"""
-        if alpha is None:
+        if alpha is None and index_return is not None:
             alpha = portfolio_return - index_return
 
-        outperformance = alpha
+        outperformance = alpha if alpha is not None else None
 
         response = self.client.table('benchmark_comparison').upsert(
             {

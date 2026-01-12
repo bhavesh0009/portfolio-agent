@@ -189,7 +189,14 @@ class PortfolioManagerAgent:
                 'risk_assessment': ''   # Not stored in DB currently
             }
 
-            logger.info(f"Loaded portfolio from database: {len(stocks)} stocks, Rs. {db_portfolio['total_capital']:,.0f} capital")
+            active_count = len([s for s in stocks if s.get('allocation_pct', 0) > 0])
+            exited_count = len(stocks) - active_count
+
+            logger.info(
+                f"Loaded portfolio from database: {active_count} active stocks" +
+                (f", {exited_count} exited" if exited_count > 0 else "") +
+                f", Rs. {db_portfolio['total_capital']:,.0f} capital"
+            )
             return portfolio
 
         except Exception as e:
@@ -234,7 +241,14 @@ class PortfolioManagerAgent:
             else:
                 portfolio = data
 
-            logger.info(f"Loaded portfolio from JSON: {len(portfolio.get('stocks', []))} stocks")
+            stocks = portfolio.get('stocks', [])
+            active_count = len([s for s in stocks if s.get('allocation_pct', 0) > 0])
+            exited_count = len(stocks) - active_count
+
+            logger.info(
+                f"Loaded portfolio from JSON: {active_count} active stocks" +
+                (f", {exited_count} exited" if exited_count > 0 else "")
+            )
             return portfolio
 
         except Exception as e:
@@ -694,6 +708,131 @@ class PortfolioManagerAgent:
             logger.error(f"Failed to find/add replacement: {e}")
             return None
 
+    def _find_and_add_cash_deployment(
+        self,
+        portfolio_id: int,
+        portfolio_profile: str,
+        available_cash: float,
+        current_holdings: List[Dict[str, Any]]
+    ) -> Optional[int]:
+        """
+        Find and add stock when cash is available and portfolio under-allocated
+
+        Similar to _find_and_add_replacement but for general cash deployment
+
+        Args:
+            portfolio_id: Portfolio ID
+            portfolio_profile: Portfolio profile
+            available_cash: Available cash for deployment
+            current_holdings: Current portfolio holdings
+
+        Returns:
+            New stock ID or None
+        """
+        # Check if cash deployment is enabled
+        if not self.config.getboolean('EXECUTION', 'enable_cash_deployment', fallback=True):
+            logger.info("Cash deployment disabled in config")
+            return None
+
+        try:
+            active_stocks = [s for s in current_holdings if s.get('allocation_pct', 0) > 0]
+
+            # Create generic "exited stock" context to trigger search
+            synthetic_exit = {
+                'ticker': 'CASH_DEPLOYMENT',
+                'company_name': 'Cash Deployment Opportunity',
+                'sector': 'Diversified',  # No specific sector preference
+                'allocation_amount': available_cash * 0.8,  # Suggest using 80% of available cash
+                'investment_view': {
+                    'holding_period': '3-6 months',
+                    'market_outlook': 'Cash deployment for under-allocated portfolio'
+                }
+            }
+
+            logger.info(f"Searching for cash deployment opportunity with Rs. {available_cash:,.2f}...")
+
+            # Use replacement finder with generic context
+            opportunity_data = self.replacement_finder.find_replacement(
+                exited_stock=synthetic_exit,
+                portfolio_profile=portfolio_profile,
+                available_capital=available_cash,
+                current_holdings=active_stocks
+            )
+
+            if not opportunity_data:
+                logger.info("No suitable investment opportunity found")
+                return None
+
+            # Calculate allocation
+            total_invested = sum(s.get('allocation_amount', 0) for s in active_stocks)
+            allocation_amount = min(
+                opportunity_data['entry_price'] * 10,  # At least 10 shares
+                available_cash * 0.8  # Use max 80% of available cash
+            )
+
+            if allocation_amount <= 0:
+                logger.warning(f"Invalid allocation amount: {allocation_amount}")
+                return None
+
+            allocation_pct = (allocation_amount / (total_invested + allocation_amount)) * 100 if total_invested + allocation_amount > 0 else 0
+
+            # Add allocation fields
+            opportunity_data['allocation_pct'] = allocation_pct
+            opportunity_data['allocation_amount'] = allocation_amount
+            opportunity_data['shares'] = int(allocation_amount / opportunity_data['entry_price']) if opportunity_data['entry_price'] > 0 else 0
+
+            # Check with execution engine
+            can_execute, reason = self.execution_engine.should_execute_entry(
+                portfolio_id=portfolio_id,
+                stock_data=opportunity_data,
+                confidence=75.0,
+                replacement_for='CASH_DEPLOYMENT'
+            )
+
+            if can_execute:
+                # Add to portfolio
+                stock_id = self.db.add_portfolio_stock(
+                    portfolio_id=portfolio_id,
+                    stock_data=opportunity_data
+                )
+
+                # Update cash balance
+                self._update_cash_balance(portfolio_id, -allocation_amount)
+
+                # Log rebalancing
+                rebalance_date = datetime.now()
+                self.db.record_rebalancing(
+                    portfolio_id=portfolio_id,
+                    stock_id=stock_id,
+                    rebalance_date=rebalance_date.date(),
+                    action='BUY',
+                    reason='Cash deployment opportunity',
+                    allocation_before=0,
+                    allocation_after=allocation_pct
+                )
+
+                # Log market event
+                self.db.record_market_event(
+                    event_type='INTERNAL',
+                    title=f"CASH DEPLOYMENT: {opportunity_data['ticker']}",
+                    description=f"Deployed Rs. {allocation_amount:,.2f} cash into {opportunity_data['ticker']} ({allocation_pct:.1f}% allocation)",
+                    event_date=rebalance_date,
+                    portfolio_id=portfolio_id,
+                    stock_id=stock_id,
+                    impact='POSITIVE',
+                    action_taken=f"Added {opportunity_data['ticker']} to fill under-allocation"
+                )
+
+                logger.info(f"✓ CASH DEPLOYED: {opportunity_data['ticker']} at Rs. {opportunity_data['entry_price']:.2f} ({allocation_pct:.1f}%)")
+                return stock_id
+            else:
+                logger.info(f"Opportunity found but not executed: {reason}")
+                return None
+
+        except Exception as e:
+            logger.error(f"Failed to find cash deployment opportunity: {e}")
+            return None
+
     def _update_cash_balance(self, portfolio_id: int, amount: float) -> None:
         """
         Update portfolio cash balance
@@ -928,7 +1067,12 @@ Respond in JSON format:
         logger.info("Analyzing news for portfolio stocks...")
         news_analysis = {}
 
-        for stock in stocks:
+        # Filter out exited positions (allocation_pct = 0)
+        active_stocks = [s for s in stocks if s.get('allocation_pct', 0) > 0]
+        logger.info(f"Analyzing news for {len(active_stocks)} active stocks " +
+                    f"(skipping {len(stocks) - len(active_stocks)} exited)")
+
+        for stock in active_stocks:
             ticker = stock['ticker']
             name = stock['name']
 
@@ -1473,7 +1617,14 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
             return {'success': False, 'error': 'Portfolio not found'}
 
         stocks = portfolio.get('stocks', [])
-        logger.info(f"Portfolio loaded: {len(stocks)} stocks, Rs. {portfolio['total_capital']:,.0f} capital")
+        active_stocks = [s for s in stocks if s.get('allocation_pct', 0) > 0]
+        exited_stocks = [s for s in stocks if s.get('allocation_pct', 0) == 0]
+
+        logger.info(
+            f"Portfolio loaded: {len(active_stocks)} active stocks" +
+            (f", {len(exited_stocks)} exited" if exited_stocks else "") +
+            f", Rs. {portfolio['total_capital']:,.0f} capital"
+        )
 
         # Get portfolio ID for database operations (find active portfolio)
         all_portfolios = self.db.get_all_portfolios()
@@ -1553,15 +1704,67 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
             stocks = portfolio.get('stocks', [])
             self.current_stocks = stocks
 
+        # Step 6b: Check for cash deployment opportunities
+        logger.info("\n[6b/14] Checking for cash deployment opportunities...")
+
+        # Get available cash
+        available_cash = self._get_available_cash(portfolio_id)
+        min_reserve_pct = self.config.getfloat('EXECUTION', 'min_cash_balance_pct', fallback=5.0)
+        total_capital = db_portfolio['total_capital']
+        min_reserve = total_capital * (min_reserve_pct / 100)
+        deployable_cash = available_cash - min_reserve
+
+        # Check if portfolio is under-allocated
+        max_stocks = self.config.getint('PORTFOLIO', 'max_stocks', fallback=15)
+        active_stocks = [s for s in stocks if s.get('allocation_pct', 0) > 0]
+        has_capacity = len(active_stocks) < max_stocks
+
+        # Check minimum position size
+        min_position_pct = self.config.getfloat('EXECUTION', 'min_position_size_pct', fallback=5.0)
+        min_position_amount = total_capital * (min_position_pct / 100)
+
+        cash_deployments = []
+
+        if deployable_cash >= min_position_amount and has_capacity:
+            target_count = min(1, max_stocks - len(active_stocks))  # Max 1 per day
+            logger.info(
+                f"Deployment opportunity: Rs. {deployable_cash:,.2f} available, " +
+                f"{len(active_stocks)}/{max_stocks} stocks, seeking {target_count} more"
+            )
+
+            opportunity_id = self._find_and_add_cash_deployment(
+                portfolio_id=portfolio_id,
+                portfolio_profile=db_portfolio['profile'],
+                available_cash=deployable_cash,
+                current_holdings=stocks
+            )
+
+            if opportunity_id:
+                cash_deployments.append(opportunity_id)
+                logger.info(f"✓ Deployed cash into 1 new stock")
+                # Reload portfolio for updated state
+                portfolio = self.load_portfolio()
+                stocks = portfolio.get('stocks', [])
+                self.current_stocks = stocks
+            else:
+                logger.info("No suitable opportunity found, will retry tomorrow")
+        else:
+            logger.info(
+                f"No deployment opportunity (cash: Rs. {deployable_cash:,.2f}, " +
+                f"stocks: {len(active_stocks)}/{max_stocks})"
+            )
+
         # Step 7: Analyze news
-        logger.info("\n[7/13] Analyzing news for portfolio stocks...")
+        logger.info("\n[7/14] Analyzing news for portfolio stocks...")
         news_analysis = self.analyze_portfolio_news(stocks)
         logger.info(f"Analyzed news for {len(news_analysis)} stocks")
 
         # Step 7a: Evaluate news-driven exit opportunities
         if self.execution_mode == 'full':
-            logger.info("\n[7a/13] Evaluating news-driven exit opportunities...")
-            news_driven_exits = self._evaluate_news_exits(stocks, news_analysis)
+            logger.info("\n[7a/14] Evaluating news-driven exit opportunities...")
+            # Filter to only active stocks
+            active_stocks = [s for s in stocks if s.get('allocation_pct', 0) > 0]
+            news_driven_exits = self._evaluate_news_exits(active_stocks, news_analysis)
 
             if news_driven_exits:
                 logger.info(f"Found {len(news_driven_exits)} news-driven exit candidates")
@@ -1601,7 +1804,7 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
                     self.current_stocks = stocks
 
         # Step 8: Market research
-        logger.info("\n[8/13] Researching current market conditions...")
+        logger.info("\n[8/14] Researching current market conditions...")
         try:
             market_query = f"Indian stock market trends, Nifty outlook, and sector performance. Focus on developments from the last {self.news_lookback_period} only."
             market_outlook = run_market_research(market_query)
@@ -1611,7 +1814,7 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
             market_outlook = "Market data unavailable"
 
         # Step 9: Generate performance context
-        logger.info("\n[9/13] Generating performance context...")
+        logger.info("\n[9/14] Generating performance context...")
         performance_context = None
         try:
             performance_context = self.performance_aggregator.generate_context(
@@ -1626,7 +1829,7 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
             performance_context = None
 
         # Step 10: Generate recommendation
-        logger.info("\n[10/13] Generating portfolio recommendation...")
+        logger.info("\n[10/14] Generating portfolio recommendation...")
         recommendation = self.generate_recommendation(
             portfolio,
             current_prices,
@@ -1645,7 +1848,7 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
             priority = "MEDIUM"
 
         # Step 11: Store manager update
-        logger.info("\n[11/13] Storing manager update in database...")
+        logger.info("\n[11/14] Storing manager update in database...")
         update_id = self.store_manager_update(
             portfolio_id,
             recommendation,
@@ -1655,11 +1858,11 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
         logger.info(f"Manager update stored (ID: {update_id})")
 
         # Step 12: Generate execution summary
-        logger.info("\n[12/13] Generating execution summary...")
+        logger.info("\n[12/14] Generating execution summary...")
         execution_summary = self._generate_execution_summary(portfolio_id)
 
         # Step 13: Final summary
-        logger.info("\n[13/13] PORTFOLIO MANAGER - Analysis Complete")
+        logger.info("\n[14/14] PORTFOLIO MANAGER - Analysis Complete")
         logger.info("="*80)
         logger.info(f"Recommendation: {recommendation.get('recommendation', 'UNKNOWN')}")
         logger.info(f"Confidence: {recommendation.get('confidence_level', 0)}%")

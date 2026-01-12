@@ -10,7 +10,7 @@ from typing import Dict, Any, List, Optional
 from configparser import ConfigParser
 
 from utils.logger import get_logger
-from agents.stock_screening_agent import run_stock_screening
+from tools.screen_stocks import screen_stocks
 from agents.market_research_agent import run_market_research
 
 logger = get_logger(__name__)
@@ -256,31 +256,71 @@ Provide a structured analysis with your assessment and confidence level.
         query = ''.join(components)
         return query
 
-    def _run_screening(self, query: str) -> List[Dict[str, Any]]:
+    def _extract_screening_criteria(self, query: str) -> str:
         """
-        Run stock screening agent
+        Extract screening criteria from replacement finder query
 
         Args:
-            query: Screening query
+            query: Full replacement finder query with context
 
         Returns:
-            List of candidate stocks
+            Screening criteria string for screen_stocks tool
+
+        Example input:
+        "Find 5-10 high-quality stocks for aggressive portfolio.
+         Screening criteria: Market Capitalization > 5000 AND Return on equity > 20
+         Focus on Renewable Energy sector..."
+
+        Example output:
+        "Market Capitalization > 5000 AND Return on equity > 20"
+        """
+        # Look for "Screening criteria:" section
+        if "Screening criteria:" in query:
+            lines = query.split('\n')
+            for i, line in enumerate(lines):
+                if "Screening criteria:" in line:
+                    # Extract the criteria line
+                    criteria_line = line.split("Screening criteria:")[-1].strip()
+                    logger.debug(f"Extracted criteria: {criteria_line}")
+                    return criteria_line
+
+        # Fallback: return full query (tool will handle it)
+        logger.debug("No 'Screening criteria:' found, using full query")
+        return query
+
+    def _run_screening(self, query: str) -> List[Dict[str, Any]]:
+        """
+        Run stock screening using screen_stocks tool directly
+
+        Args:
+            query: Screening query with criteria
+
+        Returns:
+            List of candidate stocks with structured data
         """
         try:
-            result = run_stock_screening(query, model='mid')
+            # Extract screening criteria from query
+            screening_criteria = self._extract_screening_criteria(query)
+            logger.info(f"Running stock screening with criteria: {screening_criteria[:100]}...")
 
-            # Extract stocks from result
+            # Call screen_stocks tool directly to get structured data
+            result = screen_stocks(
+                query=screening_criteria,
+                columns=[
+                    "Name", "Symbol", "Exchange", "Market Capitalization",
+                    "CMP Rs.", "Price to Earning", "Return on equity",
+                    "Debt to equity", "Sales growth 3Years", "Profit growth 3Years"
+                ],
+                max_results_to_return=50  # Get more candidates for selection
+            )
+
+            # Extract stocks from structured response
             if isinstance(result, dict):
                 candidates = result.get('stocks', [])
             elif isinstance(result, list):
                 candidates = result
-            elif isinstance(result, str):
-                # String response might be an error or description
-                logger.warning(f"Screening returned string response (likely no matches): {result[:200]}")
-                candidates = []
             else:
                 logger.warning(f"Unexpected screening result type: {type(result)}")
-                logger.debug(f"Result content: {result}")
                 candidates = []
 
             logger.info(f"Screening returned {len(candidates)} candidates")
@@ -317,8 +357,23 @@ Provide a structured analysis with your assessment and confidence level.
         for candidate in candidates:
             score = 0
 
+            # Convert string values to float for calculations
+            try:
+                roe = float(candidate.get('Return on equity', 0) or 0)
+            except (ValueError, TypeError):
+                roe = 0
+
+            try:
+                pe = float(candidate.get('Price to Earning', 25) or 25)
+            except (ValueError, TypeError):
+                pe = 25
+
+            try:
+                price = float(candidate.get('CMP Rs.', 0) or 0)
+            except (ValueError, TypeError):
+                price = 0
+
             # Fundamental score (40%)
-            roe = candidate.get('Return on equity', 0)
             if roe:
                 score += min((roe / 30) * 40, 40)  # Cap at 30% ROE = full score
 
@@ -328,7 +383,6 @@ Provide a structured analysis with your assessment and confidence level.
                 score += 30
 
             # Valuation score (20%)
-            pe = candidate.get('Price to Earning', 25)
             if pe:
                 if pe < 15:
                     score += 20
@@ -336,7 +390,6 @@ Provide a structured analysis with your assessment and confidence level.
                     score += 10
 
             # Price affordability (10%)
-            price = candidate.get('CMP Rs.', 0)
             if price and price > 0:
                 shares_possible = available_capital / price
                 if shares_possible >= 10:  # Can buy at least 10 shares
@@ -382,7 +435,12 @@ Provide a structured analysis with your assessment and confidence level.
         Returns:
             Stock entry data dict
         """
-        entry_price = stock.get('CMP Rs.', 0)
+        # Convert entry price to float (may be string from screening)
+        try:
+            entry_price = float(stock.get('CMP Rs.', 0) or 0)
+        except (ValueError, TypeError):
+            entry_price = 0
+            logger.warning(f"Failed to parse entry price for {stock.get('Name', 'Unknown')}, defaulting to 0")
 
         # Get risk parameters from config
         if profile == 'aggressive':
