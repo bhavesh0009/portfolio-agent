@@ -406,8 +406,8 @@ class PerformanceCalculator:
             # Calculate staleness (days between latest data and end_date)
             staleness_days = (end_date - latest_date).days
 
-            # Fetch if data is more than 3 days old (accounts for weekends)
-            if staleness_days > 3:
+            # Fetch if data is 3+ days old (accounts for weekends: Fri→Mon = 3 days)
+            if staleness_days >= 3:
                 needs_fetch = True
                 logger.debug(f"Need fetch: data is stale (latest={latest_date}, end={end_date}, staleness={staleness_days} days)")
 
