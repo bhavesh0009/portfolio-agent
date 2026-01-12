@@ -34,7 +34,12 @@ export default function BenchmarkComparison({ comparison, loading, onPeriodChang
   const fetchHistory = async (portfolioId: number, symbol: string) => {
     try {
       setLoadingHistory(true);
-      const res = await fetch(`http://localhost:8000/api/benchmark-history/${portfolioId}?index_symbol=${encodeURIComponent(symbol)}`);
+      const getApiUrl = () => {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        return `${baseUrl}/api/benchmark-history/${portfolioId}?index_symbol=${encodeURIComponent(symbol)}`;
+      };
+
+      const res = await fetch(getApiUrl());
       if (!res.ok) throw new Error('Failed to fetch history');
       const data = await res.json();
       setHistoryData(data.history || []);
