@@ -294,21 +294,27 @@ class PerformanceContextAggregator:
 
         # Try 2: Calculate from daily_prices
         try:
-            start_date = date.today() - timedelta(days=period_days)
-            start_value = 0
+            target_date = date.today() - timedelta(days=period_days)
+            start_stocks_value = 0
 
             for stock in stocks:
-                # Get historical price
+                # Get historical price on or before target date (last trading day)
+                # Use end_date parameter to look backward, not forward
                 price_history = self.db.get_stock_price_history(
                     stock['id'],
-                    start_date=start_date,
+                    end_date=target_date,  # Changed: use end_date to look backward
                     limit=1
                 )
 
                 if price_history:
                     start_price = price_history[0]['close_price']
                     shares = stock['allocation_amount'] / stock['entry_price']
-                    start_value += shares * start_price
+                    start_stocks_value += shares * start_price
+
+            # Add cash balance to start_value (bug fix)
+            portfolio = self.db.get_portfolio_by_id(portfolio_id)
+            cash_balance = portfolio.get('cash_balance', 0) if portfolio else 0
+            start_value = start_stocks_value + cash_balance
 
             if start_value > 0:
                 return ((current_value - start_value) / start_value) * 100
