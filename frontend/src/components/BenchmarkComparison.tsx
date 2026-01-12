@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { BenchmarkComparison as BenchmarkComparisonType } from '@/types';
-import { TrendingUp, TrendingDown, Target } from 'lucide-react';
+import { TrendingUp, TrendingDown, Target, BarChart2 } from 'lucide-react';
+import BenchmarkChart from './BenchmarkChart';
 
 interface BenchmarkComparisonProps {
   comparison: BenchmarkComparisonType | null;
@@ -16,10 +17,33 @@ const PERIODS: Array<'1M' | '3M' | '6M' | '1Y' | 'ALL'> = ['1M', '3M', '6M', '1Y
 export default function BenchmarkComparison({ comparison, loading, onPeriodChange, portfolioCreatedAt }: BenchmarkComparisonProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<'1M' | '3M' | '6M' | '1Y' | 'ALL'>(comparison?.period || 'ALL');
   const [isVisible, setIsVisible] = useState(false);
+  const [historyData, setHistoryData] = useState<any[]>([]);
+  const [activeBenchmark, setActiveBenchmark] = useState<string>('^NSEI');
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  useEffect(() => {
+    if (comparison?.portfolio_id) {
+      fetchHistory(comparison.portfolio_id, activeBenchmark);
+    }
+  }, [comparison?.portfolio_id, activeBenchmark]);
+
+  const fetchHistory = async (portfolioId: number, symbol: string) => {
+    try {
+      setLoadingHistory(true);
+      const res = await fetch(`http://localhost:8000/api/benchmark-history/${portfolioId}?index_symbol=${encodeURIComponent(symbol)}`);
+      if (!res.ok) throw new Error('Failed to fetch history');
+      const data = await res.json();
+      setHistoryData(data.history || []);
+    } catch (err) {
+      console.error('Error fetching benchmark history:', err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
 
   // Calculate portfolio age in days
   const portfolioAge = portfolioCreatedAt
@@ -75,35 +99,71 @@ export default function BenchmarkComparison({ comparison, loading, onPeriodChang
 
   const formatPercent = (value: number) => `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 
-  return (
-    <div
-      className={`bg-[#0a1628]/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}
-    >
-      {/* Header with Period Selector */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h3 className="text-xl font-bold text-slate-100 font-serif">Benchmark Alpha</h3>
-          <p className="text-sm text-slate-400 mt-1">Performance vs Market Indices</p>
-        </div>
+  // Get active benchmark name
+  const activeBenchmarkName = comparison?.benchmarks.find(b => b.index_symbol === activeBenchmark)?.index_name || 'Benchmark';
 
-        <div className="flex gap-1.5 bg-slate-900/50 p-1.5 rounded-xl border border-slate-800">
-          {PERIODS.map((period) => (
-            <button
-              key={period}
-              onClick={() => handlePeriodChange(period)}
-              disabled={!isValidPeriod(period)}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${!isValidPeriod(period)
-                  ? 'opacity-50 cursor-not-allowed bg-slate-800/50 text-slate-600'
-                  : selectedPeriod === period
-                    ? 'bg-slate-700 text-slate-100 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                }`}
-            >
-              {period}
-            </button>
-          ))}
+  return (
+    <div className={`bg-[#0a1628]/80 backdrop-blur-md rounded-2xl shadow-sm border border-slate-800 p-6 transition-all duration-500 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+          <Target className="w-5 h-5 text-emerald-400" />
+          Benchmark Comparison
+        </h2>
+
+        <div className="flex items-center gap-3">
+          {/* Benchmark Selector */}
+          <select
+            value={activeBenchmark}
+            onChange={(e) => setActiveBenchmark(e.target.value)}
+            className="bg-slate-900 border border-slate-700 text-slate-300 text-xs rounded-md px-2 py-1 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+            disabled={loading}
+          >
+            {comparison?.benchmarks.map((b) => (
+              <option key={b.index_symbol} value={b.index_symbol}>
+                {b.index_name}
+              </option>
+            ))}
+            {!comparison?.benchmarks.some(b => b.index_symbol === '^NSEI') && (
+              <option value="^NSEI">Nifty 50</option>
+            )}
+          </select>
+
+          {/* Period Selector */}
+          <div className="flex bg-slate-900/50 rounded-lg p-1 border border-slate-800">
+            {PERIODS.map((period) => {
+              const valid = isValidPeriod(period);
+              return (
+                <button
+                  key={period}
+                  onClick={() => handlePeriodChange(period)}
+                  disabled={!valid}
+                  className={`
+                    px-3 py-1 rounded-md text-xs font-medium transition-all duration-200
+                    ${selectedPeriod === period
+                      ? 'bg-emerald-500/10 text-emerald-400 shadow-sm'
+                      : valid
+                        ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                        : 'text-slate-700 cursor-not-allowed'}
+                  `}
+                  title={!valid ? `Portfolio too new for ${period} comparison` : ''}
+                >
+                  {period}
+                </button>
+              );
+            })}
+          </div>
         </div>
+      </div>
+
+      {/* Chart Section */}
+      <div className="mb-8">
+        {loadingHistory ? (
+          <div className="h-[300px] flex items-center justify-center bg-gray-900/20 rounded-lg border border-gray-800/50">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+          </div>
+        ) : (
+          <BenchmarkChart data={historyData} indexName={activeBenchmarkName} />
+        )}
       </div>
 
       {/* Portfolio Return Summary */}
@@ -120,8 +180,8 @@ export default function BenchmarkComparison({ comparison, loading, onPeriodChang
             </p>
           </div>
           <div className={`p-3 rounded-xl backdrop-blur-sm ${comparison.portfolio_return >= 0
-              ? 'bg-emerald-500/10 border border-emerald-500/20'
-              : 'bg-rose-500/10 border border-rose-500/20'
+            ? 'bg-emerald-500/10 border border-emerald-500/20'
+            : 'bg-rose-500/10 border border-rose-500/20'
             }`}>
             {comparison.portfolio_return >= 0 ? (
               <TrendingUp className="h-6 w-6 text-emerald-500" strokeWidth={2.5} />

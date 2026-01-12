@@ -1110,6 +1110,31 @@ class DatabaseService:
         return updated_count
 
 
+    def get_benchmark_history(
+        self,
+        portfolio_id: int,
+        index_symbol: str = '^NSEI',
+        limit: int = 365
+    ) -> List[Dict[str, Any]]:
+        """
+        Get daily benchmark comparison history from the view
+
+        Args:
+            portfolio_id: Portfolio ID
+            index_symbol: Index symbol (default '^NSEI')
+            limit: Max days to return (default 365)
+        """
+        response = self.client.table('portfolio_benchmark_history')\
+            .select('*')\
+            .eq('portfolio_id', portfolio_id)\
+            .eq('index_symbol', index_symbol)\
+            .order('comparison_date', desc=False)\
+            .limit(limit)\
+            .execute()
+        
+        return response.data
+
+
 # Singleton instance
 _db_service = None
 

@@ -135,3 +135,41 @@ CREATE INDEX IF NOT EXISTS idx_performance_date ON performance_metrics(metric_da
 CREATE INDEX IF NOT EXISTS idx_rebalancing_portfolio ON rebalancing_history(portfolio_id);
 CREATE INDEX IF NOT EXISTS idx_market_events_portfolio ON market_events(portfolio_id);
 CREATE INDEX IF NOT EXISTS idx_market_events_date ON market_events(event_date);
+
+-- View for dynamic benchmark comparisons
+CREATE VIEW IF NOT EXISTS portfolio_benchmark_history AS
+WITH portfolio_starts AS (
+    SELECT portfolio_id, MIN(snapshot_date) as start_date
+    FROM portfolio_snapshots
+    GROUP BY portfolio_id
+),
+benchmark_initials AS (
+    SELECT
+        ps.portfolio_id,
+        idx.index_symbol,
+        ip.close_price as initial_index_price
+    FROM
+        portfolio_starts ps
+    CROSS JOIN
+        (SELECT DISTINCT index_symbol FROM index_prices) idx
+    JOIN LATERAL (
+        SELECT close_price
+        FROM index_prices
+        WHERE index_symbol = idx.index_symbol
+        AND price_date <= ps.start_date
+        ORDER BY price_date DESC
+        LIMIT 1
+    ) ip ON TRUE
+)
+SELECT
+    ps.portfolio_id,
+    ip.index_symbol,
+    ps.snapshot_date as comparison_date,
+    ps.total_return_pct as portfolio_return,
+    ((ip.close_price - bi.initial_index_price) / bi.initial_index_price * 100) as index_return
+FROM
+    portfolio_snapshots ps
+JOIN
+    index_prices ip ON ps.snapshot_date = ip.price_date
+JOIN
+    benchmark_initials bi ON ps.portfolio_id = bi.portfolio_id AND ip.index_symbol = bi.index_symbol;

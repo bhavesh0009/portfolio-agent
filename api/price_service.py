@@ -763,6 +763,29 @@ async def get_portfolio_history(
 
 
 
+
+@app.get("/api/benchmark-history/{portfolio_id}")
+async def get_benchmark_history(
+    portfolio_id: int,
+    index_symbol: str = Query('^NSEI', description="Index symbol to compare against"),
+    limit: int = Query(365, description="Number of days to fetch")
+) -> Dict[str, Any]:
+    """
+    Get historical benchmark comparison data
+    """
+    try:
+        history = db.get_benchmark_history(portfolio_id, index_symbol, limit)
+        return {
+            'portfolio_id': portfolio_id,
+            'index_symbol': index_symbol,
+            'history': history,
+            'fetched_at': datetime.now().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error fetching benchmark history: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # -----------------------------------------------------------------------------
 # Cloud Scheduler Endpoints
 # -----------------------------------------------------------------------------
