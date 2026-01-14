@@ -24,14 +24,15 @@ def main():
     print("=" * 80)
     print("\nThis agent will:")
     print("1. Load your LATEST portfolio (always works with newest portfolio)")
-    print("2. Check current prices vs stop-loss/targets")
-    print("3. Analyze recent news for your holdings")
-    print("4. Research current market conditions")
-    print("5. Generate AI-powered recommendations")
-    print("6. Store updates in database for dashboard display")
+    print("2. Fetch current stock & index prices (auto-refresh)")
+    print("3. Check current prices vs stop-loss/targets")
+    print("4. Analyze recent news for your holdings")
+    print("5. Research current market conditions")
+    print("6. Generate AI-powered recommendations")
+    print("7. Store updates in database for dashboard display")
     print("\n" + "=" * 80)
 
-    # Run portfolio manager (always uses latest portfolio)
+    # Run portfolio manager (handles all data refresh internally)
     result = run_portfolio_manager()
 
     if not result['success']:

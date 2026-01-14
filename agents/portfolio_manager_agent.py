@@ -1653,6 +1653,19 @@ Provide structured JSON output with keys: assessment, immediate_actions, stocks_
         logger.info("\n[3/10] Persisting daily prices...")
         self.persist_daily_prices(stocks, current_prices)
 
+        # Step 3.5: Update index prices (for benchmark comparisons)
+        logger.info("\n[3.5/10] Updating benchmark index prices...")
+        try:
+            today = date.today()
+            index_result = self.price_fetcher.update_index_prices(price_date=today)
+            if index_result['success'] > 0:
+                logger.info(f"Updated {index_result['success']}/{index_result['total']} benchmark indices")
+            else:
+                logger.info("No index prices updated (may be non-trading day)")
+        except Exception as e:
+            logger.warning(f"Failed to update index prices: {e}")
+            # Don't fail entire run if index update fails
+
         # Step 4: Calculate and save portfolio snapshot
         logger.info("\n[4/10] Calculating portfolio snapshot...")
         snapshot_result = self.perf_calculator.generate_portfolio_snapshot(portfolio_id)
